@@ -1,11 +1,17 @@
 import 'dart:async';
 import 'package:cgp_driver_app/app/modules/customNavigation/controllers/custom_navigation_controller.dart';
+import 'package:cgp_driver_app/common_widgets/app_button.dart';
+import 'package:cgp_driver_app/constraints/body_text.dart';
+import 'package:cgp_driver_app/services/socket_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../constraints/app_colors.dart';
+import '../../../../constraints/dimensions.dart';
+import '../../../../constraints/header_text.dart';
 import '../../../routes/app_pages.dart';
 import '../../completeTrip/controllers/complete_trip_controller.dart';
 import '../../generalMap/general_map_controller.dart';
@@ -22,7 +28,6 @@ class OngoingTripController extends GetxController {
   var status = "".obs;
   var isLoading = false.obs;
   var isExpand = false.obs;
-
   var actionButtonText = "".obs;
   var statusText = "".obs;
   var distance = "".obs;
@@ -158,6 +163,8 @@ class OngoingTripController extends GetxController {
     actionButtonText.value = "Trip Completed";
     statusText.value = "Completed";
   }
+  
+  
 
   Future<void> changeOrderStatus({String? status, bool? shouldReload}) async {
     if (nextStatus != OrderStatus.waitingAtDestinationPoint.name) {
@@ -177,6 +184,7 @@ class OngoingTripController extends GetxController {
                   (route) => false,
             );
             await LocalServices.storeOnGoingTrip(null);
+            Get.find<SocketService>().updateOrderId("");
             Get.toNamed(Routes.COMPLETE_TRIP);
             Get.put(CompleteTripController());
             Get.find<CompleteTripController>().tripRequestDetails.value = tripRequestDetails.value;
@@ -343,4 +351,60 @@ class OngoingTripController extends GetxController {
     totalSeconds = 0;
     timer = null;
   }
+
+
+  cancelOrder({required String title, required String message}) async {
+    await LocalServices.storeOnGoingTrip(null);
+    Get.find<SocketService>().updateOrderId("");
+    Get.offAndToNamed(Routes.HOME);
+
+    showDialog(
+        context: Get.context!,
+        builder: (buildContext) {
+          return Dialog(
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 24.w, //AppDimensions.horizontalPadding,
+                vertical: 24.h, //AppDimensions.verticalPadding
+              ),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15.r)),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    //  const CustomCircleAvatar(width: 50, height: 50, image: AppImagePath.warningIcon),
+                     HeaderText(
+                      text: title,
+                      maxLine: 10,
+                      align: TextAlign.center,
+                    ),
+                    SizedBox(
+                      height: AppDimensions.sectionPadding.h,
+                    ),
+                     BodyText(text: message),
+                    SizedBox(
+                      height: AppDimensions.sectionPadding.h,
+                    ),
+                    AppButton(text: "Dismiss",
+                        bgColor: AppColors.primaryColor,
+                        onTap: (){
+                      Get.back();
+
+                    }),
+                    SizedBox(
+                      height: AppDimensions.sectionPadding.h,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+
+
+  }
+
+
 }

@@ -37,10 +37,11 @@ class TripHistoryDetailsModel {
 class Data {
   final int? id;
   final String? orderType;
-  final int? deliveryCharge;
+  final String? deliveryCharge;
+  final String? riderFee;
   final String? shippingStatus;
-  final int? distance;
-  final int? duration;
+  final String? distance;
+  final String? duration;
   final DateTime? acceptedAt;
   final DateTime? deliveredAt;
   final RequestFrom? requestFrom;
@@ -51,6 +52,7 @@ class Data {
     this.id,
     this.orderType,
     this.deliveryCharge,
+    this.riderFee,
     this.shippingStatus,
     this.distance,
     this.duration,
@@ -65,6 +67,7 @@ class Data {
     id: json["id"],
     orderType: json["order_type"],
     deliveryCharge: json["delivery_charge"],
+    riderFee: json["rider_fee"],
     shippingStatus: json["shipping_status"],
     distance: json["distance"],
     duration: json["duration"],
@@ -79,6 +82,7 @@ class Data {
     "id": id,
     "order_type": orderType,
     "delivery_charge": deliveryCharge,
+    "rider_fee": riderFee,
     "shipping_status": shippingStatus,
     "distance": distance,
     "duration": duration,

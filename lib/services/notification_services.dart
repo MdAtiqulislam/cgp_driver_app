@@ -695,7 +695,6 @@ class NotificationServices {
   }
 }*/
 
-
 /*
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
@@ -951,8 +950,6 @@ class NotificationServices {
 }
 
  */
-
-
 
 /*
 
@@ -1210,7 +1207,6 @@ class NotificationServices {
 }
 */
 
-
 /*
 
 
@@ -1467,8 +1463,6 @@ class NotificationServices {
 }
 
 */
-
-
 
 /*
 import 'dart:io';
@@ -1749,7 +1743,6 @@ class NotificationServices {
 */
 
 // working fine
-
 
 /*
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -2044,8 +2037,6 @@ class NotificationServices {
 
 
 */
-
-
 
 /*
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -2343,6 +2334,7 @@ class NotificationServices {
 
 */
 
+/*
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -2644,6 +2636,1420 @@ class NotificationServices {
       await Vibration.vibrate(duration: 500);
     } catch (e) {
       print('Error playing sound: $e');
+    }
+  }
+}
+
+ */
+
+// working
+
+/*
+import 'dart:async';
+import 'package:cgp_driver_app/constraints/app_strings.dart';
+import 'package:flutter_callkit_incoming/entities/entities.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+import 'dart:io';
+import '../app/modules/tripRequest/controllers/trip_request_controller.dart';
+import '../app/routes/app_pages.dart';
+import '../common_widgets/custom_notification.dart';
+import '../constraints/app_colors.dart';
+import '../constraints/body_text.dart';
+import '../constraints/header_text.dart';
+import '../other_controllers/count_down_controller.dart';
+import '../common_widgets/custom_animated_button.dart';
+import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:vibration/vibration.dart';
+
+class NotificationServices {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  static final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+  FlutterLocalNotificationsPlugin();
+  static var myMessages = <RemoteMessage>[].obs;
+  static AudioPlayer audioPlayer = AudioPlayer();
+  static const storage = FlutterSecureStorage();
+  static int notificationCount = 0;
+  static Timer? soundTimer;
+
+  void requestNotificationPermission() async {
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: true,
+      badge: true,
+      carPlay: true,
+      criticalAlert: true,
+      provisional: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      if (kDebugMode) {
+        print("User granted permission");
+      }
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
+      if (kDebugMode) {
+        print("User granted provisional permission");
+      }
+    } else {
+      if (kDebugMode) {
+        print("User denied permission");
+      }
+    }
+  }
+
+  static void initLocalNotification(
+      BuildContext context, RemoteMessage message) async {
+    var androidInitializationSettings =
+    const AndroidInitializationSettings('@mipmap/launcher_icon');
+    var iosInitializationSettings = const DarwinInitializationSettings();
+
+    var initializationSettings = InitializationSettings(
+        android: androidInitializationSettings, iOS: iosInitializationSettings);
+
+    await _flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) async {
+        if (response.payload != null) {
+          handleForegroundNotification(context);
+          stopSound();
+        }
+      },
+    );
+
+    // Prevent duplicate notifications by checking if the notification is already shown
+    String? storedRequestId = await storage.read(key: 'requestId');
+    String? storedNotificationId = await storage.read(key: 'notificationId');
+    if (storedRequestId == message.data['requestId'] &&
+        storedNotificationId == message.data['id']) {
+      print('Notification already shown');
+      return;
+    }
+
+    // Save data to secure storage
+    await storage.write(key: 'requestId', value: message.data['requestId']);
+    await storage.write(key: 'notificationId', value: message.data['id']);
+  }
+
+  Future<void> createNotificationChannel() async {
+    AndroidNotificationChannel channel = const AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      description:
+      'This channel is used for important notifications.', // description
+      importance: Importance.high,
+      sound: RawResourceAndroidNotificationSound('sound'), // Custom sound
+    );
+
+    await _flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+  }
+
+  static Future<void> firebaseInit(BuildContext context) async {
+    FirebaseMessaging.onMessage.listen((message) {
+      if (Platform.isIOS) {
+        foregroundMessage();
+      }
+
+      if (Platform.isAndroid) {
+        initLocalNotification(context, message);
+
+        if (Get.isSnackbarOpen == false) {
+          // App is in foreground, only show Snackbar and play sound
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            playSound();
+            showSnackBar(
+              message.notification?.title ?? '',
+              message.notification?.body ?? '',
+              message.data["requestId"],
+              message.data["id"],
+            );
+          });
+        } else {
+          // App is in background, show full notification
+          showNotificationWithoutContext(message);
+        }
+      } else {
+        if (Get.isSnackbarOpen == false) {
+          // App is in foreground, only show Snackbar and play sound
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showSnackBar(
+              message.notification?.title ?? '',
+              message.notification?.body ?? '',
+              message.data["requestId"],
+              message.data["id"],
+            );
+            playSound();
+          });
+        } else {
+          // App is in background, show full notification
+          showNotificationWithoutContext(message);
+        }
+      }
+    });
+  }
+
+  static Future<void> showNotificationWithoutContext(
+      RemoteMessage message) async {
+
+    FlutterCallkitIncoming.showCallkitIncoming(
+        CallKitParams(
+          id: message.data['id'],
+          nameCaller: message.notification?.title ?? 'New Request',
+          appName: 'Tradebar',
+          avatar: AppImagePath.appLogo,
+          handle: 'New Request',
+          type: 0, // 0 for incoming call
+          duration: 15000, // 15 seconds
+          textAccept: 'View',
+          textDecline: 'Dismiss',
+          extra: <String, dynamic>{'requestId': message.data['requestId']},
+        //  missedCall: false, // Prevent missed call notification
+          missedCallNotification: const NotificationParams(showNotification: false)
+        ));
+
+    showDialog(
+      context: Get.context!,
+      builder: (context) {
+        return CustomOverlay(
+          requestId: message.data['requestId'],
+          notificationId: message.data['id'], message: message,
+        );
+      },
+      barrierDismissible: false,
+    );
+
+    Future.delayed(const Duration(seconds: 15), () {
+      if (Get.isDialogOpen!) {
+        Get.back(); // Close the overlay after 15 seconds if it's still open
+      }
+    });
+
+    // Prevent push notifications in background or kill mode
+    if (message.data['background'] == 'true') {
+      return;
+    }
+  }
+
+  Future<String> getDeviceToken() async {
+    String? token = await messaging.getToken();
+    print("FCM Token:$token");
+    return token!;
+  }
+
+  static Future<void> handleMessageClick(
+      BuildContext context, RemoteMessage message) async {
+    Get.put(TripRequestController());
+    Get.find<TripRequestController>().getTripDetails(
+        requestId: message.data['requestId'],
+        notificationId: message.data['id']);
+    Get.toNamed(Routes.TRIP_REQUEST);
+    stopSound(); // Stop the sound when notification is clicked
+
+    // Clear the stored data to prevent duplicate notifications
+    await storage.delete(key: 'requestId');
+    await storage.delete(key: 'notificationId');
+  }
+
+
+  Future<void> setupInterruptMessage(BuildContext context) async {
+    RemoteMessage? initialMessage =
+    await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      // Handle initial message
+      if (initialMessage.data.isNotEmpty) {
+        handleMessageClick(context, initialMessage);
+      }
+    }
+
+    FirebaseMessaging.onMessageOpenedApp.listen((event) async {
+      handleMessageClick(context, event);
+    });
+  }
+
+
+  static Future<void> foregroundMessage() async {
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+
+
+  static void handleForegroundNotification(BuildContext context) async {
+    String? requestId = await storage.read(key: 'requestId');
+    String? notificationId = await storage.read(key: 'notificationId');
+
+    if (requestId != null && notificationId != null) {
+      Get.find<TripRequestController>()
+          .getTripDetails(requestId: requestId, notificationId: notificationId);
+      Get.toNamed(Routes.TRIP_REQUEST);
+
+      // Clear the saved data
+      await storage.delete(key: 'requestId');
+      await storage.delete(key: 'notificationId');
+      stopSound(); // Stop the sound when handling foreground notification
+    }
+  }
+
+  static void showSnackBar(
+      String title, String message, String requestId, String notificationId) {
+    Get.put(CountdownController());
+
+    Get.snackbar(
+      title,
+      '',
+      titleText: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          HeaderText(text: title, color: AppColors.primaryColor, size: 14),
+          BodyText(text: message),
+        ],
+      ),
+      messageText: AnimatedButtonWithProgress(
+        onPressed: () {
+          Get.put(TripRequestController());
+          Get.find<TripRequestController>().getTripDetails(
+              requestId: requestId, notificationId: notificationId);
+          Get.toNamed(Routes.TRIP_REQUEST);
+          Get.back();
+          stopSound(); // Stop the sound when snackbar button is clicked
+        },
+        text: "View",
+        startColor: Colors.white,
+        endColor: Colors.black.withOpacity(.5),
+        duration: const Duration(seconds: 15),
+        icon: const Icon(Icons.navigation_sharp, color: Colors.white),
+      ),
+      backgroundColor: AppColors.shadowColor,
+      margin: const EdgeInsets.all(0),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      borderRadius: 0,
+      duration: const Duration(seconds: 15),
+      onTap: (GetSnackBar snack) {
+        Get.put(TripRequestController());
+        Get.find<TripRequestController>()
+            .getTripDetails(requestId: requestId, notificationId: notificationId);
+        Get.toNamed(Routes.TRIP_REQUEST);
+        Get.back();
+        stopSound(); // Stop the sound when snackbar is tapped
+      },
+    );
+
+    Get.find<CountdownController>().startCountdown();
+  }
+
+  static void playSound() async {
+    audioPlayer = AudioPlayer();
+    audioPlayer.setReleaseMode(ReleaseMode.loop);
+    await audioPlayer.setSourceAsset("sound_2.mp3");
+    await audioPlayer.resume();
+
+    soundTimer = Timer(Duration(seconds: 15), () {
+      stopSound();
+    });
+  }
+
+
+  static void stopSound() async {
+    await audioPlayer.stop();
+    if (await Vibration.hasVibrator() ?? false) {
+      Vibration.cancel();
+    }
+    soundTimer?.cancel();
+  }
+}
+
+
+*/
+
+/*
+// AnimatedButtonWithProgress Widget
+class AnimatedButtonWithProgress extends StatefulWidget {
+  final VoidCallback onPressed;
+  final String text;
+  final Color startColor;
+  final Color endColor;
+  final Duration duration;
+  final Icon icon;
+
+  AnimatedButtonWithProgress({super.key,
+    required this.onPressed,
+    required this.text,
+    required this.startColor,
+    required this.endColor,
+    required this.duration,
+    required this.icon,
+  });
+
+  @override
+  _AnimatedButtonWithProgressState createState() =>
+      _AnimatedButtonWithProgressState();
+}
+
+class _AnimatedButtonWithProgressState extends State<AnimatedButtonWithProgress>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Color?> _colorAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: widget.duration,
+      vsync: this,
+    );
+    _colorAnimation = ColorTween(
+      begin: widget.startColor,
+      end: widget.endColor,
+    ).animate(_controller);
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _colorAnimation,
+      builder: (context, child) {
+        return ElevatedButton.icon(
+          onPressed: widget.onPressed,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _colorAnimation.value,
+          ),
+          icon: widget.icon,
+          label: Text(widget.text),
+        );
+      },
+    );
+  }
+}
+
+// CountdownController Class
+class CountdownController extends GetxController {
+  var countdown = 15.obs;
+  Timer? _timer;
+
+  void startCountdown() {
+    _timer?.cancel();
+    countdown.value = 15;
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (countdown.value > 0) {
+        countdown.value--;
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    _timer?.cancel();
+    super.onClose();
+  }
+}*/
+
+/*
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
+import 'package:get/get.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'dart:async';
+import '../app/modules/tripRequest/controllers/trip_request_controller.dart';
+import '../app/routes/app_pages.dart';
+import '../common_widgets/custom_notification.dart';
+
+class NotificationServices with WidgetsBindingObserver {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  static var myMessages = <RemoteMessage>[].obs;
+  static AudioPlayer audioPlayer = AudioPlayer();
+  static Timer? soundTimer;
+  static bool isAppInForeground = true;
+
+  NotificationServices() {
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    isAppInForeground = state == AppLifecycleState.resumed;
+  }
+
+  void requestNotificationPermission() async {
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: true,
+      badge: true,
+      carPlay: true,
+      criticalAlert: true,
+      provisional: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print("User granted permission");
+    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+      print("User granted provisional permission");
+    } else {
+      print("User denied permission");
+    }
+  }
+
+  static Future<void> firebaseInit(BuildContext context) async {
+    FirebaseMessaging.onMessage.listen((message) {
+      showCustomNotification(message);
+
+      /*if (isAppInForeground) {
+        showSnackBar(
+          message.notification?.title ?? '',
+          message.notification?.body ?? '',
+          message.data["requestId"],
+          message.data["id"],
+        );
+        playSound();
+      } else {
+        showCustomNotification(message);
+      }*/
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      handleMessageClick(context, message);
+    });
+
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        handleMessageClick(context, message);
+      }
+    });
+  }
+
+  static Future<void> showCustomNotification(RemoteMessage message) async {
+/*    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: createUniqueId(),
+        channelKey: 'high_importance_channel',
+        title: message.notification?.title,
+        body: message.notification?.body,
+        payload: {
+          'requestId': message.data['requestId'],
+          'notificationId': message.data['id']
+        },
+        notificationLayout: NotificationLayout.Default,
+        backgroundColor: Colors.grey,
+        color: Colors.blue,
+       // smallIcon: 'resource://drawable/ic_stat_notification',
+      ),
+      actionButtons: [
+        NotificationActionButton(
+          key: 'VIEW',
+          label: 'View',
+          color: Colors.white,
+          enabled: true,
+          autoDismissible: true,
+        ),
+      ],
+    );*/
+
+    FlutterCallkitIncoming.showCallkitIncoming(
+        CallKitParams(
+      id: message.data['id'],
+      nameCaller: message.notification?.title ?? 'Rideshare Request',
+      appName: 'Rider App',
+      avatar: 'https://example.com/avatar.png',
+      handle: 'Rideshare Request',
+      type: 0, // 0 for incoming call
+      duration: 15000, // 15 seconds
+      textAccept: 'View',
+      textDecline: 'Dismiss',
+      extra: <String, dynamic>{'requestId': message.data['requestId']},
+    ));
+
+    showDialog(
+      context: Get.context!,
+      builder: (context) {
+        return CustomOverlay(
+          requestId: message.data['requestId'],
+          notificationId: message.data['id'], message: message,
+        );
+      },
+      barrierDismissible: false,
+    );
+
+    Future.delayed(Duration(seconds: 15), () {
+      Get.back(); // Close the overlay after 15 seconds
+    });
+  }
+
+  static int createUniqueId() {
+    return DateTime.now().millisecondsSinceEpoch.remainder(100000);
+  }
+
+  Future<String> getDeviceToken() async {
+    String? token = await messaging.getToken();
+    print("FCM Token:$token");
+    return token!;
+  }
+
+  static Future<void> handleMessageClick(BuildContext context, RemoteMessage message) async {
+    stopSound();
+    Get.put(TripRequestController());
+    Get.find<TripRequestController>().getTripDetails(
+        requestId: message.data['requestId'],
+        notificationId: message.data['id']);
+    Get.toNamed(Routes.TRIP_REQUEST);
+  }
+
+  static void showSnackBar(String title, String message, String requestId, String notificationId) {
+    Get.snackbar(
+      title,
+      '',
+      titleText: Text(title, style: TextStyle(color: Colors.blue, fontSize: 14)),
+      messageText: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(message),
+          TextButton(
+            onPressed: () {
+              Get.put(TripRequestController());
+              Get.find<TripRequestController>().getTripDetails(
+                  requestId: requestId, notificationId: notificationId);
+              Get.toNamed(Routes.TRIP_REQUEST);
+              Get.back();
+            },
+            child: Text("View"),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.grey,
+      colorText: Colors.blue,
+      duration: Duration(seconds: 15),
+      snackPosition: SnackPosition.TOP,
+      snackStyle: SnackStyle.FLOATING,
+    );
+  }
+
+  static void playSound() async {
+    audioPlayer = AudioPlayer();
+    audioPlayer.setReleaseMode(ReleaseMode.loop);
+    await audioPlayer.setSourceAsset("sound_2.mp3");
+    await audioPlayer.resume();
+
+    soundTimer = Timer(Duration(seconds: 15), () {
+      stopSound();
+    });
+  }
+
+  static void stopSound() {
+    audioPlayer.stop();
+    soundTimer?.cancel();
+  }
+
+  static void onActionReceivedMethod(ReceivedAction receivedAction) {
+    if (receivedAction.buttonKeyPressed == 'VIEW') {
+      handleMessageClick(Get.context!, RemoteMessage(
+        data: {
+          'requestId': receivedAction.payload?['requestId'] ?? '',
+          'id': receivedAction.payload?['notificationId'] ?? '',
+        },
+      ));
+    }
+  }
+}
+
+ */
+
+/*
+import 'dart:async';
+import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+import 'dart:io';
+import '../app/modules/tripRequest/controllers/trip_request_controller.dart';
+import '../app/routes/app_pages.dart';
+import '../constraints/app_colors.dart';
+import '../constraints/body_text.dart';
+import '../constraints/header_text.dart';
+import '../other_controllers/count_down_controller.dart';
+import '../common_widgets/custom_animated_button.dart';
+import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:vibration/vibration.dart';
+
+class NotificationServices {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  static AudioPlayer audioPlayer = AudioPlayer();
+  static const storage = FlutterSecureStorage();
+  static Timer? soundTimer;
+
+  void requestNotificationPermission() async {
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: true,
+      badge: true,
+      carPlay: true,
+      criticalAlert: true,
+      provisional: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      if (kDebugMode) {
+        print("User granted permission");
+      }
+    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+      if (kDebugMode) {
+        print("User granted provisional permission");
+      }
+    } else {
+      if (kDebugMode) {
+        print("User denied permission");
+      }
+    }
+  }
+
+  static Future<void> firebaseInit(BuildContext context) async {
+    FirebaseMessaging.onMessage.listen((message) {
+      // App is in foreground
+      if (Get.isSnackbarOpen == false) {
+        // Show Snackbar and play sound only
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          playSound();
+          showSnackBar(
+            message.notification?.title ?? '',
+            message.notification?.body ?? '',
+            message.data["requestId"],
+            message.data["id"],
+          );
+        });
+      }
+    });
+
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      // App is in background or terminated
+      showCallScreen(message);
+    });
+  }
+
+  static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+    // Handle background message
+    if (message.notification != null) {
+      showCallScreen(message);
+    }
+  }
+
+  static Future<void> showCallScreen(RemoteMessage message) async {
+    FlutterCallkitIncoming.showCallkitIncoming(
+      CallKitParams(
+        id: message.data['id'],
+        nameCaller: message.notification?.title ?? 'Rideshare Request',
+        appName: 'Rider App',
+        avatar: 'https://example.com/avatar.png',
+        handle: 'Rideshare Request',
+        type: 0, // 0 for incoming call
+        duration: 15000, // 15 seconds
+        textAccept: 'View',
+        textDecline: 'Dismiss',
+        extra: <String, dynamic>{'requestId': message.data['requestId']},
+      ),
+    );
+  }
+
+  Future<String> getDeviceToken() async {
+    String? token = await messaging.getToken();
+    print("FCM Token:$token");
+    return token!;
+  }
+
+  static void showSnackBar(
+      String title,
+      String message,
+      String requestId,
+      String notificationId,
+      ) {
+    Get.put(CountdownController());
+
+    Get.snackbar(
+      title,
+      '',
+      titleText: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          HeaderText(text: title, color: AppColors.primaryColor, size: 14),
+          BodyText(text: message),
+        ],
+      ),
+      messageText: AnimatedButtonWithProgress(
+        onPressed: () {
+          Get.put(TripRequestController());
+          Get.find<TripRequestController>().getTripDetails(
+              requestId: requestId, notificationId: notificationId);
+          Get.toNamed(Routes.TRIP_REQUEST);
+          Get.back();
+          stopSound(); // Stop the sound when snackbar button is clicked
+        },
+        text: "View",
+        startColor: Colors.white,
+        endColor: Colors.black.withOpacity(.5),
+        duration: const Duration(seconds: 15),
+        icon: const Icon(Icons.navigation_sharp, color: Colors.white),
+      ),
+      backgroundColor: AppColors.shadowColor,
+      margin: const EdgeInsets.all(0),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      borderRadius: 0,
+      duration: const Duration(seconds: 15),
+      onTap: (GetSnackBar snack) {
+        Get.put(TripRequestController());
+        Get.find<TripRequestController>().getTripDetails(
+            requestId: requestId, notificationId: notificationId);
+        Get.toNamed(Routes.TRIP_REQUEST);
+        Get.back();
+        stopSound(); // Stop the sound when snackbar is tapped
+      },
+    );
+
+    Get.find<CountdownController>().startCountdown();
+  }
+
+  static void playSound() async {
+    audioPlayer = AudioPlayer();
+    audioPlayer.setReleaseMode(ReleaseMode.loop);
+    await audioPlayer.setSourceAsset("sound_2.mp3");
+    await audioPlayer.resume();
+
+    soundTimer = Timer(Duration(seconds: 15), () {
+      stopSound();
+    });
+  }
+
+  static void stopSound() async {
+    await audioPlayer.stop();
+    if (await Vibration.hasVibrator() ?? false) {
+      Vibration.cancel();
+    }
+    soundTimer?.cancel();
+  }
+}
+
+*/
+
+/*
+
+
+import 'dart:async';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_callkit_incoming/entities/android_params.dart';
+import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
+import 'package:flutter_callkit_incoming/entities/ios_params.dart';
+import 'package:flutter_callkit_incoming/entities/notification_params.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+import 'package:uuid/uuid.dart';
+import 'dart:io';
+import '../app/modules/tripRequest/controllers/trip_request_controller.dart';
+import '../app/routes/app_pages.dart';
+import '../constraints/app_colors.dart';
+import '../constraints/body_text.dart';
+import '../constraints/header_text.dart';
+import '../other_controllers/count_down_controller.dart';
+import '../common_widgets/custom_animated_button.dart';
+import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:vibration/vibration.dart';
+
+class NotificationServices {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  static AudioPlayer audioPlayer = AudioPlayer();
+  static const storage = FlutterSecureStorage();
+  static Timer? soundTimer;
+
+  void requestNotificationPermission() async {
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: true,
+      badge: true,
+      carPlay: true,
+      criticalAlert: true,
+      provisional: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      if (kDebugMode) {
+        print("User granted permission");
+      }
+    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+      if (kDebugMode) {
+        print("User granted provisional permission");
+      }
+    } else {
+      if (kDebugMode) {
+        print("User denied permission");
+      }
+    }
+  }
+
+  static Future<void> firebaseInit(BuildContext context) async {
+    FirebaseMessaging.onMessage.listen((message) {
+      // App is in foreground
+
+      print("message....... :${message.data.toString()}");
+      if (Get.isSnackbarOpen == false) {
+        // Show Snackbar and play sound only
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          playSound();
+          showSnackBar(
+            message.notification?.title ?? '',
+            message.notification?.body ?? '',
+            message.data["requestId"],
+            message.data["id"],
+          );
+        });
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      // App is in background or terminated
+      showCallScreen(message);
+     // showCallkitIncoming(const Uuid().v4());
+    });
+  }
+
+
+
+  static Future<void> showCallScreen(RemoteMessage message) async {
+   await FlutterCallkitIncoming.showCallkitIncoming(
+      CallKitParams(
+        id: message.data['id'],
+        nameCaller: message.notification?.title ?? 'New Request',
+        appName: 'Rider App',
+        handle: 'New Request',
+        type: 0, // 0 for incoming call
+        duration: 15000, // 15 seconds
+        textAccept: 'View',
+        textDecline: 'Dismiss',
+        missedCallNotification: const NotificationParams(showNotification: false),
+        extra: <String, dynamic>{'requestId': message.data['requestId']},
+
+      ),
+    );
+  }
+
+  Future<String> getDeviceToken() async {
+    String? token = await messaging.getToken();
+    print("FCM Token:$token");
+    return token!;
+  }
+
+  static void showSnackBar(
+      String title,
+      String message,
+      String requestId,
+      String notificationId,
+      ) {
+    Get.put(CountdownController());
+
+    Get.snackbar(
+      title,
+      '',
+      titleText: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          HeaderText(text: title, color: AppColors.primaryColor, size: 14),
+          BodyText(text: message),
+        ],
+      ),
+      messageText: AnimatedButtonWithProgress(
+        onPressed: () {
+          Get.put(TripRequestController());
+          Get.find<TripRequestController>().getTripDetails(
+              requestId: requestId, notificationId: notificationId);
+          Get.toNamed(Routes.TRIP_REQUEST);
+          Get.back();
+          stopSound(); // Stop the sound when snackbar button is clicked
+        },
+        text: "View",
+        startColor: Colors.white,
+        endColor: Colors.black.withOpacity(.5),
+        duration: const Duration(seconds: 15),
+        icon: const Icon(Icons.navigation_sharp, color: Colors.white),
+      ),
+      backgroundColor: AppColors.shadowColor,
+      margin: const EdgeInsets.all(0),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      borderRadius: 0,
+      duration: const Duration(seconds: 15),
+      onTap: (GetSnackBar snack) {
+        Get.put(TripRequestController());
+        Get.find<TripRequestController>().getTripDetails(
+            requestId: requestId, notificationId: notificationId);
+        Get.toNamed(Routes.TRIP_REQUEST);
+        Get.back();
+        stopSound(); // Stop the sound when snackbar is tapped
+      },
+    );
+
+    Get.find<CountdownController>().startCountdown();
+  }
+
+  static void playSound() async {
+    audioPlayer = AudioPlayer();
+    audioPlayer.setReleaseMode(ReleaseMode.loop);
+    await audioPlayer.setSourceAsset("sound_2.mp3");
+    await audioPlayer.resume();
+
+    soundTimer = Timer(Duration(seconds: 15), () {
+      stopSound();
+    });
+  }
+
+  static void stopSound() async {
+    await audioPlayer.stop();
+    if (await Vibration.hasVibrator() ?? false) {
+      Vibration.cancel();
+    }
+    soundTimer?.cancel();
+  }
+
+
+
+
+}
+
+
+ */
+
+import 'dart:async';
+
+import 'package:flutter_callkit_incoming/entities/entities.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+import 'dart:io';
+import '../app/modules/tripRequest/controllers/trip_request_controller.dart';
+import '../app/routes/app_pages.dart';
+import '../constraints/app_colors.dart';
+import '../constraints/body_text.dart';
+import '../constraints/header_text.dart';
+import '../other_controllers/count_down_controller.dart';
+import '../common_widgets/custom_animated_button.dart';
+import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:vibration/vibration.dart';
+
+class NotificationServices {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  static final FlutterLocalNotificationsPlugin
+      _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  static var myMessages = <RemoteMessage>[].obs;
+  static AudioPlayer audioPlayer = AudioPlayer();
+  static const storage = FlutterSecureStorage();
+  static Timer? soundTimer;
+
+  static int notificationCount = 0;
+  static bool isCallEnded = false; // Add a flag to manage call state
+
+  NotificationServices() {
+    _initCallKit(); // Initialize the CallKit listener
+  }
+
+  void requestNotificationPermission() async {
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: true,
+      badge: true,
+      carPlay: true,
+      criticalAlert: true,
+      provisional: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      if (kDebugMode) {
+        print("User granted permission");
+      }
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
+      if (kDebugMode) {
+        print("User granted provisional permission");
+      }
+    } else {
+      if (kDebugMode) {
+        print("User denied permission");
+      }
+    }
+  }
+
+  static void initLocalNotification(
+      BuildContext context, RemoteMessage message) async {
+    var androidInitializationSettings =
+        const AndroidInitializationSettings('@mipmap/launcher_icon');
+    var iosInitializationSettings = const DarwinInitializationSettings();
+
+    var initializationSettings = InitializationSettings(
+        android: androidInitializationSettings, iOS: iosInitializationSettings);
+
+    await _flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) async {
+        if (response.payload != null) {
+          handleForegroundNotification(context);
+        }
+      },
+    );
+  }
+
+  Future<void> createNotificationChannel() async {
+    AndroidNotificationChannel channel = const AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      description:
+          'This channel is used for important notifications.', // description
+      importance: Importance.high,
+      sound: RawResourceAndroidNotificationSound('sound'), // Custom sound
+    );
+
+    await _flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+  }
+
+  static Future<void> firebaseInit(BuildContext context) async {
+    FirebaseMessaging.onMessage.listen((message) {
+      if (Platform.isIOS) {
+        foregroundMessage();
+      }
+
+      if (Platform.isAndroid) {
+        initLocalNotification(context, message);
+
+        if (Get.isSnackbarOpen == false && message.data["requestId"] != null) {
+          // App is in foreground, only show Snackbar and play sound
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (message.data["id"] != null) playSound();
+            showSnackBar(
+              message.notification?.title ?? '',
+              message.notification?.body ?? '',
+              message.data["requestId"],
+              message.data["id"],
+            );
+          });
+        } else {
+          // App is in background, show full notification
+          if (message.data['id'] != null) {
+            showNotificationWithoutContext(message);
+          }
+        }
+      } else {
+        if (Get.isSnackbarOpen == false) {
+          // App is in foreground, only show Snackbar and play sound
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showSnackBar(
+              message.notification?.title ?? '',
+              message.notification?.body ?? '',
+              message.data["requestId"],
+              message.data["id"],
+            );
+            if (message.data["id"] != null) playSound();
+          });
+        } else {
+          // App is in background, show full notification
+          showNotificationWithoutContext(message);
+        }
+      }
+    });
+  }
+
+  static Future<void> showNotificationWithoutContext(
+      RemoteMessage message) async {
+    AndroidNotificationChannel channel = const AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      description:
+          'This channel is used for important notifications.', // description
+      importance: Importance.high,
+      sound: RawResourceAndroidNotificationSound('sound'), // Custom sound
+    );
+
+    AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+      channel.id,
+      channel.name,
+      channelDescription: channel.description,
+      importance: Importance.high,
+      priority: Priority.high,
+      channelShowBadge: true,
+      ticker: "ticker",
+      fullScreenIntent: true,
+      styleInformation: InboxStyleInformation(
+        [], // Add the messages here
+        contentTitle: 'You have ${notificationCount + 1} new messages',
+        summaryText: 'New messages',
+      ),
+    );
+
+    DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      badgeNumber: notificationCount + 1,
+      sound: 'sound.wav', // Custom sound
+    );
+
+    NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+      iOS: darwinNotificationDetails,
+    );
+
+    // Check if notification with the same ID is already displayed
+    /*  String? storedRequestId = await storage.read(key: 'requestId');
+    String? storedNotificationId = await storage.read(key: 'notificationId');
+    if (storedRequestId == message.data['requestId'] &&
+        storedNotificationId == message.data['id']) {
+      print('Notification already shown');
+      return;
+    }*/
+
+    await _flutterLocalNotificationsPlugin.show(
+      0,
+      message.notification?.title ?? '',
+      message.notification?.body ?? '',
+      notificationDetails,
+      payload: message.data['requestId'],
+    );
+
+    /*    // Save data to secure storage
+    await storage.write(key: 'requestId', value: message.data['requestId']);
+    await storage.write(key: 'notificationId', value: message.data['id']);*/
+
+    // Update notification count
+    notificationCount++;
+
+    showCallScreen(message);
+  }
+
+  Future<String> getDeviceToken() async {
+    String? token = await messaging.getToken();
+    print("FCM Token:$token");
+    return token!;
+  }
+
+  static Future<void> handleMessageClick(
+      BuildContext context, RemoteMessage message) async {
+    stopSound();
+    FlutterCallkitIncoming.endAllCalls();
+
+    Get.put(TripRequestController());
+    Get.find<TripRequestController>().getTripDetails(
+        requestId: message.data['requestId'],
+        notificationId: message.data['id']);
+    Get.toNamed(Routes.TRIP_REQUEST);
+  }
+
+  Future<void> setupInterruptMessage(BuildContext context) async {
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      // Handle initial message
+      if (initialMessage.data.isNotEmpty) {
+        handleMessageClick(context, initialMessage);
+      }
+    }
+
+    FirebaseMessaging.onMessageOpenedApp.listen((event) async {
+      handleMessageClick(context, event);
+    });
+  }
+
+  static Future<void> foregroundMessage() async {
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+
+  static void handleForegroundNotification(BuildContext context) async {
+    String? requestId = await storage.read(key: 'requestId');
+    String? notificationId = await storage.read(key: 'notificationId');
+
+    if (requestId != null && notificationId != null) {
+      Get.find<TripRequestController>()
+          .getTripDetails(requestId: requestId, notificationId: notificationId);
+      Get.toNamed(Routes.TRIP_REQUEST);
+
+      // Clear the saved data
+      await storage.delete(key: 'requestId');
+      await storage.delete(key: 'notificationId');
+    }
+  }
+
+  static void showSnackBar(
+      String title, String message, String requestId, String notificationId) {
+    Get.put(CountdownController());
+
+    Get.snackbar(
+      title,
+      '',
+      titleText: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          HeaderText(text: title, color: AppColors.primaryColor, size: 14),
+          BodyText(text: message),
+        ],
+      ),
+      messageText: AnimatedButtonWithProgress(
+        onPressed: () {
+          Get.put(TripRequestController());
+          Get.find<TripRequestController>().getTripDetails(
+              requestId: requestId, notificationId: notificationId);
+          Get.toNamed(Routes.TRIP_REQUEST);
+          Get.back();
+        },
+        text: "View",
+        startColor: Colors.white,
+        endColor: Colors.black.withOpacity(.5),
+        duration: const Duration(seconds: 15),
+        icon: const Icon(Icons.navigation_sharp, color: Colors.white),
+      ),
+      backgroundColor: AppColors.shadowColor,
+      colorText: AppColors.primaryColor,
+      duration: const Duration(seconds: 15),
+      snackPosition: SnackPosition.TOP,
+      snackStyle: SnackStyle.FLOATING,
+    );
+  }
+
+  static void playSound() async {
+    audioPlayer = AudioPlayer();
+    audioPlayer.setReleaseMode(ReleaseMode.loop);
+    await audioPlayer.setSourceAsset("sound_2.mp3");
+    await audioPlayer.resume();
+
+    soundTimer = Timer(const Duration(seconds: 15), () {
+      stopSound();
+    });
+  }
+
+  static void stopSound() async {
+    await audioPlayer.stop();
+    if (await Vibration.hasVibrator() ?? false) {
+      Vibration.cancel();
+    }
+    soundTimer?.cancel();
+  }
+
+  static Future<void> showCallScreen(RemoteMessage message) async {
+    if (message.data["id"] != null && message.data["requestId"] != null) {
+      await FlutterCallkitIncoming.showCallkitIncoming(
+        CallKitParams(
+          id: message.data['id'],
+          nameCaller: message.notification?.title ?? 'New Request',
+          appName: 'Tradebar',
+          // avatar: 'https://example.com/avatar.png',
+          handle: 'New Request',
+          type: 0,
+          // 0 for incoming call
+          duration: 15000,
+          // 15 seconds
+          textAccept: 'View',
+          textDecline: 'Dismiss',
+          missedCallNotification:
+              const NotificationParams(showNotification: false),
+          extra: <String, dynamic>{
+            'requestId': message.data['requestId'],
+            'notification_id': message.data['id'],
+          },
+          android: const AndroidParams(
+              ringtonePath: 'sound_2',
+              // Specify the path to the sound file in assets
+              isShowLogo: false,
+              isShowFullLockedScreen: false),
+          ios: const IOSParams(
+            ringtonePath:
+                'sound_2.mp3', // Specify the path to the sound file in assets
+          ),
+        ),
+      );
+    }
+  }
+
+  void _initCallKit() {
+    FlutterCallkitIncoming.onEvent.listen((event) async {
+      if (event != null) {
+        switch (event.event) {
+          case Event.actionCallAccept:
+            _handleCallAccept(event);
+            break;
+          case Event.actionCallDecline:
+            _handleCallDecline(event);
+            break;
+          case Event.actionCallEnded:
+            _handleCallDecline(event);
+            break;
+          default:
+            break;
+        }
+      }
+    });
+  }
+
+  void _handleCallAccept(CallEvent event) {
+    print("...............");
+    String requestId = event.body["extra"]['requestId'];
+    String notificationId = event.body["extra"]['notification_id'];
+
+    // Handle the call accept action
+    Get.put(TripRequestController());
+    Get.find<TripRequestController>()
+        .getTripDetails(requestId: requestId, notificationId: notificationId);
+    Get.toNamed(Routes.TRIP_REQUEST);
+
+    // End the call
+    FlutterCallkitIncoming.endCall(event.body['id']);
+  }
+
+  void _handleCallDecline(CallEvent event) {
+    // Ensure call end process is handled only once
+    if (!isCallEnded) {
+      isCallEnded = true; // Set the flag to true
+      FlutterCallkitIncoming.endCall(event.body['id']);
+      // Reset the flag after some time to allow future calls
+      Timer(Duration(seconds: 2), () {
+        isCallEnded = false;
+      });
     }
   }
 }

@@ -60,7 +60,7 @@ class ReviewAndRatingsView extends GetView<ReviewAndRatingsController> {
                        controller.submitReview();
                      }
                    },
-                   buttonLabel: "Submit And Back",
+                   buttonLabel: "Submit",
                                         ),
                 ),
                 if (controller.isLoading.value) const LoadingScreen(),

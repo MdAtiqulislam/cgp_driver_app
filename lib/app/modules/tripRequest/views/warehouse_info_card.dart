@@ -284,7 +284,7 @@ class WareHouseInfoCard extends GetView<TripRequestController> {
             const BodyText(text: "Trip Cost"),
             HeaderText(
               text:
-                  "${controller.tripRequestDetails.value.data?.deliveryCost ?? "0"} AUD",
+                  "${controller.tripRequestDetails.value.data?.riderFee ?? "0"} AUD",
               size: 20,
               color: AppColors.primaryColor,
             )

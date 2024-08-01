@@ -2,15 +2,19 @@ import 'package:cgp_driver_app/app/modules/ongoingTrip/controllers/ongoing_trip_
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../common_widgets/animated_timer.dart';
 import '../../../../common_widgets/app_button.dart';
 import '../../../../common_widgets/custom_circle_avatar.dart';
+import '../../../../common_widgets/custom_title.dart';
 import '../../../../constraints/app_colors.dart';
 import '../../../../constraints/app_strings.dart';
 import '../../../../constraints/body_text.dart';
 import '../../../../constraints/dimensions.dart';
 import '../../../../constraints/header_text.dart';
+import '../../../routes/app_pages.dart';
+import '../../messaging/controllers/messaging_controller.dart';
 
 class TripInfoCard extends GetView<OngoingTripController> {
   const TripInfoCard({super.key});
@@ -98,18 +102,35 @@ class TripInfoCard extends GetView<OngoingTripController> {
             Container(
               child: Row(
                 children: [
-                  Icon(
-                    Icons.circle,
-                    color: AppColors.successColor,
-                    size: 10,
-                  ),
+                  IconButton(onPressed: (){
+                    Get.bottomSheet(
+                      isScrollControlled: true,
+                      ignoreSafeArea: false,
+                      callWidget(),
+                    );
+
+                  }, icon: const Icon(
+                    Icons.phone,
+                    color: AppColors.primaryColor,
+                  )),
                   SizedBox(
                     width: AppDimensions.contentPadding.w,
                   ),
-                  BodyText(
-                    text: "Ongoing",
-                    color: AppColors.primaryColor,
-                  )
+                  IconButton(onPressed: () {
+                    Get.put(MessagingController());
+                    Get.find<MessagingController>().initValue();
+                    Get.find<MessagingController>().imageLink.value =
+                        controller.tripRequestDetails.value.data
+                            ?.requestFrom?.url ??
+                            "";
+                    Get.find<MessagingController>().chatWith.value=controller.tripRequestDetails.value.data
+                        ?.requestFrom?.name ??
+                        "";
+                    Get.find<MessagingController>().orderDetails.value=controller.tripRequestDetails.value;
+                    Get.find<MessagingController>().loadPreviousMessage();
+                    Get.toNamed(Routes.MESSAGING);
+                  }, icon: const Icon(Icons.chat,
+                       color: AppColors.primaryColor)),
                 ],
               ),
             )
@@ -239,4 +260,132 @@ class TripInfoCard extends GetView<OngoingTripController> {
             ],
           );
   }
+
+
+  Widget callWidget() {
+    return SafeArea(
+      child: Container(
+        width: Get.width,
+        color: Colors.white,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(
+                  horizontal: AppDimensions.horizontalPadding.w,
+                  vertical: AppDimensions.contentPadding.h),
+              width: Get.width,
+              color: AppColors.primaryColor,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const HeaderText(
+                    text: "Call",
+                    color: Colors.white,
+                  ),
+                  InkWell(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: Image.asset(AppImagePath.cancelIcon))
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: AppDimensions.horizontalPadding.w,
+                  vertical: AppDimensions.verticalPadding.h),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const CustomTitle(title: "Contact With Pickup Point"),
+                  HeaderText(
+                      text: controller.tripRequestDetails.value.data
+                          ?.pickupLocation?.name ??
+                          ""),
+                  SizedBox(
+                    height: AppDimensions.widgetPadding.h,
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      final Uri launchUri = Uri(
+                        scheme: 'tel',
+                        path: controller.tripRequestDetails.value.data
+                            ?.pickupLocation?.phone ??
+                            "",
+                      );
+                      await launchUrl(launchUri);
+                    },
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.phone,
+                          color: AppColors.primaryColor,
+                        ),
+                        SizedBox(
+                          width: AppDimensions.widgetPadding.w,
+                        ),
+                        HeaderText(
+                          text: controller.tripRequestDetails.value.data
+                              ?.pickupLocation?.phone ??
+                              "",
+                          color: AppColors.primaryColor,
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: AppDimensions.sectionPadding.h,
+                  ),
+                  const CustomTitle(title: "Contact With Destination Point"),
+                  HeaderText(
+                      text: controller.tripRequestDetails.value.data
+                          ?.dropOffLocation?.name ??
+                          ""),
+                  SizedBox(
+                    height: AppDimensions.widgetPadding.h,
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      final Uri launchUri = Uri(
+                        scheme: 'tel',
+                        path: controller.tripRequestDetails.value.data
+                            ?.dropOffLocation?.phone ??
+                            "",
+                      );
+                      await launchUrl(launchUri);
+                    },
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.phone,
+                          color: AppColors.primaryColor,
+                        ),
+                        SizedBox(
+                          width: AppDimensions.widgetPadding.w,
+                        ),
+                        HeaderText(
+                          text: controller.tripRequestDetails.value.data
+                              ?.dropOffLocation?.phone ??
+                              "",
+                          color: AppColors.primaryColor,
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: AppDimensions.sectionPadding.h,
+                  ),
+
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
 }

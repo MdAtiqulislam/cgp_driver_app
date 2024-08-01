@@ -22,10 +22,10 @@ class MessagingView extends GetView<MessagingController> {
           appBar: AppBar(
             title: Row(
               children: [
-                const CustomCircleAvatar(
+                 CustomCircleAvatar(
                   height: 30,
                   width: 30,
-                  image: "",
+                  image: controller.imageLink.value,
                 ),
                 SizedBox(
                   width: AppDimensions.contentPadding.w,

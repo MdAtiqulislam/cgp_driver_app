@@ -260,13 +260,13 @@ class TripDetailsView extends GetView<TripDetailsController> {
             children: [
               Row(
                 children: [
-                  HeaderText(text: "Total Distance: ",size: 12,),
+                  const HeaderText(text: "Total Distance: ",size: 12,),
                   BodyText(text: "${controller.tripDetails.value.data?.distance??0} KM",color: AppColors.primaryColor,)
                 ],
               ),
               Row(
                 children: [
-                  HeaderText(text: "Total time: ",size: 12,),
+                  const HeaderText(text: "Total time: ",size: 12,),
                   BodyText(text: "${controller.tripDetails.value.data?.duration??0}",color: AppColors.primaryColor,)
                 ],
               ),
@@ -276,8 +276,8 @@ class TripDetailsView extends GetView<TripDetailsController> {
         Expanded(child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            BodyText(text: "Trip Cost",size: 10,),
-            HeaderText(text: "${controller.tripDetails.value.data?.deliveryCharge??0} AUD",color: AppColors.primaryColor,size: 20,)
+            const BodyText(text: "Trip Cost",size: 10,),
+            HeaderText(text: "${controller.tripDetails.value.data?.riderFee??0} AUD",color: AppColors.primaryColor,size: 20,)
           ],
         ),),
       ],

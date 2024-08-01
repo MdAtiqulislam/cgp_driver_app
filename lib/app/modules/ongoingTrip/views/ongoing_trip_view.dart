@@ -1,3 +1,4 @@
+import 'package:cgp_driver_app/app/modules/customNavigation/controllers/custom_navigation_controller.dart';
 import 'package:cgp_driver_app/app/modules/messaging/controllers/messaging_controller.dart';
 import 'package:cgp_driver_app/app/modules/ongoingTrip/views/trip_info_card.dart';
 import 'package:cgp_driver_app/app/routes/app_pages.dart';
@@ -30,15 +31,15 @@ class OngoingTripView extends GetView<OngoingTripController> {
               Scaffold(
                 appBar: CustomAppBar(
                   minimal: true,
-                  title: "Trouble on Trip?",
+                  title: "Ongoing",
                   titleTextSize: 14,
-                  onTrouble: () {
+                 /* onTrouble: () {
                     Get.bottomSheet(
                       isScrollControlled: true,
                       ignoreSafeArea: false,
                       troubleOnTrip(),
                     );
-                  },
+                  },*/
                 ),
                 body: Padding(
                   padding: EdgeInsets.symmetric(
@@ -55,11 +56,17 @@ class OngoingTripView extends GetView<OngoingTripController> {
                           showNavigationButton:
                               controller.showNavigationButton.value,
                           startNavigation: () {
+                            Get.put(CustomNavigationController());
+
+                            Get.find<CustomNavigationController>().startNavigation(
+                                controller.destinationPoint.value.latitude,
+                                controller.destinationPoint.value.longitude);
+                            Get.toNamed(Routes.CUSTOM_NAVIGATION);
                             /* Get.find<MapController>().openNavigationApps(
                                 startPoint: controller.startPoint.value,
                                 endPoint: controller.destinationPoint.value,
                                 context: Get.context!);*/
-                            controller.openNavigationApps(context: context);
+                          //  controller.openNavigationApps(context: context);
                           }),
                       SizedBox(
                         height: AppDimensions.widgetPadding.h,

@@ -41,7 +41,8 @@ class TripDetailsData {
   final SingleAddressModel? dropOffLocation;
   final String? totalDistance;
   final String? totalWeight;
-  final int? deliveryCost;
+  final String? deliveryCost;
+  final String? riderFee;
   final String? estimatedArrivalTime;
   final int? orderId;
   final String? stripeId;
@@ -59,6 +60,7 @@ class TripDetailsData {
     this.totalDistance,
     this.totalWeight,
     this.deliveryCost,
+    this.riderFee,
     this.estimatedArrivalTime,
     this.orderId,
     this.stripeId,
@@ -77,6 +79,7 @@ class TripDetailsData {
     totalDistance: json["totalDistance"],
     totalWeight: json["totalWeight"],
     deliveryCost: json["deliveryCost"],
+    riderFee: json["riderFee"],
     estimatedArrivalTime: json["estimatedArrivalTime"],
     orderId: json["orderId"],
     stripeId: json["stripeId"],
@@ -95,6 +98,7 @@ class TripDetailsData {
     "totalDistance": totalDistance,
     "totalWeight": totalWeight,
     "deliveryCost": deliveryCost,
+    "riderFee": riderFee,
     "estimatedArrivalTime": estimatedArrivalTime,
     "orderId": orderId,
     "stripeId": stripeId,

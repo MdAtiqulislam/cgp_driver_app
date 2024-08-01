@@ -147,7 +147,7 @@ class CompleteTripView extends GetView<CompleteTripController> {
               const HeaderText(text: "Earned:"),
               HeaderText(
                 text:
-                    "${controller.tripRequestDetails.value.data?.deliveryCost ?? ""} AUD",
+                    "${controller.tripRequestDetails.value.data?.riderFee ?? ""} AUD",
                 size: 20,
                 color: AppColors.primaryColor,
               ),

@@ -162,7 +162,8 @@ class SingleTripHistoryModel {
   final int? orderId;
   final String? orderType;
   final String? shippingStatus;
-  final int? deliveryCharge;
+  final String? deliveryCharge;
+  final String? riderFee;
   final DateTime? acceptedAt;
   final DateTime? pickedUpAt;
   final DateTime? deliveredAt;
@@ -176,6 +177,7 @@ class SingleTripHistoryModel {
     this.orderType,
     this.shippingStatus,
     this.deliveryCharge,
+    this.riderFee,
     this.acceptedAt,
     this.pickedUpAt,
     this.deliveredAt,
@@ -190,6 +192,7 @@ class SingleTripHistoryModel {
     orderType: json["order_type"],
     shippingStatus: json["shipping_status"],
     deliveryCharge: json["delivery_charge"],
+    riderFee: json["rider_fee"],
     acceptedAt: json["accepted_at"] == null ? null : DateTime.parse(json["accepted_at"]),
     pickedUpAt: json["picked_up_at"] == null ? null : DateTime.parse(json["picked_up_at"]),
     deliveredAt: json["delivered_at"] == null ? null : DateTime.parse(json["delivered_at"]),
@@ -204,6 +207,7 @@ class SingleTripHistoryModel {
     "order_type": orderType,
     "shipping_status": shippingStatus,
     "delivery_charge": deliveryCharge,
+    "rider_fee": riderFee,
     "accepted_at": acceptedAt?.toIso8601String(),
     "picked_up_at": pickedUpAt?.toIso8601String(),
     "delivered_at": deliveredAt?.toIso8601String(),

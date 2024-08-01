@@ -21,7 +21,7 @@ import '../../tripRequest/controllers/trip_request_controller.dart';
 class HomeController extends GetxController {
  var isLoading=false.obs;
  var rider=RiderModel().obs;
- //NotificationServices notificationServices = NotificationServices();
+ NotificationServices notificationServices = NotificationServices();
  var mapController=Get.put(MapController());
 
  @override

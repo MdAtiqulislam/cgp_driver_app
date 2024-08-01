@@ -118,10 +118,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:uuid/uuid.dart';
 import 'app/routes/app_pages.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
+  //NotificationServices.showCallScreen(message);
   NotificationServices.showNotificationWithoutContext(message);
 }
 
@@ -161,11 +163,13 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp>{
 
   @override
   void initState() {
     super.initState();
+
+
     Get.put(HomeController());
     NotificationServices().requestNotificationPermission();
     NotificationServices().createNotificationChannel();

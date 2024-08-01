@@ -11,7 +11,6 @@ import '../../../../services/notification_services.dart';
 import '../../../routes/app_pages.dart';
 
 class SplashScreenController extends GetxController {
-
   NotificationServices notificationServices=NotificationServices();
   var isLoading = false.obs;
   var onGoingTripDetails=TripRequestDetailsModel().obs;
@@ -62,6 +61,7 @@ class SplashScreenController extends GetxController {
       if(response!=null){
         onGoingTripDetails.value=TripRequestDetailsModel.fromJson(response);
         Get.put(OngoingTripController());
+        Get.find<SocketService>().updateOrderId("${onGoingTripDetails.value.data?.orderId}");
         Get.find<OngoingTripController>().tripRequestDetails.value=onGoingTripDetails.value;
         Get.find<OngoingTripController>().handleStatus();
         Get.toNamed(Routes.ONGOING_TRIP);

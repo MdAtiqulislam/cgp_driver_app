@@ -153,7 +153,7 @@ class MyDrawer extends StatelessWidget {
                         },
                         icon: const Icon(Icons.chat,size: 16,color: AppColors.iconColor,),
                         imageIcon: AppImagePath.support,
-                        text: "Chat History"),
+                        text: "Messages"),
                     const Divider(),
                     drawerButton(
                         onTap: () {
@@ -212,101 +212,4 @@ class MyDrawer extends StatelessWidget {
       ),
     );
   }
-
-/*  Widget choseImage() {
-    return Container(
-      // padding: EdgeInsets.symmetric(horizontal: Dimensions.horizontalPadding),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(15.r),
-              topLeft: Radius.circular(15.r),),),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            height:32.h,
-          ),
-          const HeaderText(
-            text: "Select an action",
-            color: AppColors.primaryColor,
-            size: 18,
-          ),
-          SizedBox(
-            height: 32.h//AppDimensions.widgetPaddingVer,
-          ),
-          const Divider(
-            thickness: 5,
-            color: AppColors.primaryColor,
-          ),
-          SizedBox(
-            height:32.h// AppDimensions.contentPaddingVer,
-          ),
-          Container(
-            margin: const EdgeInsets.all(5),
-            color: Colors.white,
-            child: Material(
-              child: InkWell(
-                onTap: () {
-                  controller.selectImage(source: ImageSource.camera);
-                },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal:24.w,// AppDimensions.horizontalPadding,
-                      vertical:24.h// AppDimensions.widgetPaddingVer
-                  ),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        AppImagePath.cameraIcon,
-                        height: 40.h,
-                      ),
-                      SizedBox(
-                        width:24.w// AppDimensions.widgetPaddingHor,
-                      ),
-                      const HeaderText(text: "Open Camera"),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const Divider(),
-          // SizedBox(height: Dimensions.widgetPaddingVer,),
-          Container(
-            margin: const EdgeInsets.all(5),
-            color: Colors.white,
-            child: Material(
-              child: InkWell(
-                onTap: () {
-                  controller.selectImage(source: ImageSource.gallery);
-                },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal:24.w,// AppDimensions.horizontalPadding,
-                      vertical: 24.w//AppDimensions.widgetPaddingVer
-                  ),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        AppImagePath.galleryIcon,
-                        height: 40.h,
-                      ),
-                      SizedBox(
-                        width:16.w// AppDimensions.widgetPaddingHor,
-                      ),
-                      const HeaderText(text: "Open Gallery"),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 32.h//AppDimensions.sectionPaddingVer,
-          )
-        ],
-      ),
-    );
-  }*/
 }

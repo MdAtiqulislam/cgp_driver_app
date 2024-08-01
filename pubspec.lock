@@ -97,6 +97,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  awesome_notifications:
+    dependency: "direct main"
+    description:
+      name: awesome_notifications
+      sha256: d9e46ce7f5171ee1e9b1c5bc6dc40bd77528561f592842ce97ce3a0a9ae155ef
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.3+1"
   boolean_selector:
     dependency: transitive
     description:
@@ -382,6 +390,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_callkit_incoming:
+    dependency: "direct main"
+    description:
+      name: flutter_callkit_incoming
+      sha256: "911978c1db30d2cf886daf80c874ac0beac8482682769b397c0dc3190f3f6cef"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.4+1"
   flutter_image:
     dependency: "direct main"
     description:
@@ -1294,7 +1310,7 @@ packages:
     source: hosted
     version: "3.1.2"
   uuid:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: uuid
       sha256: "83d37c7ad7aaf9aa8e275490669535c8080377cfa7a7004c24dfac53afffaa90"

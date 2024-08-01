@@ -36,7 +36,7 @@ class MessagingController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    rider.value = await LocalServices.getUser() ?? RiderModel();
+   await getRider();
   }
 
   void fetchMessages(String senderId) async {
@@ -83,6 +83,10 @@ class MessagingController extends GetxController {
 
 
   Future<void> loadPreviousMessage() async {
+    await getRider();
+
+print("Sender id:$senderId, Rider id: ${rider.value.userId.toString()}");
+
 
     messages.value=[];
     isLoading.value=true;
@@ -116,5 +120,16 @@ class MessagingController extends GetxController {
     replayToId=null;
   }
 
+Future<void>  getRider() async{
+    isLoading.value=true;
+  try {
+    rider.value = await LocalServices.getUser() ?? RiderModel();
+  } finally {
+    isLoading.value=false;
+  }
+}
+
 
 }
+
+

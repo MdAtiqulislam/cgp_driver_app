@@ -8,6 +8,7 @@ import 'package:cgp_driver_app/other_controllers/appbar_controller.dart';
 import 'package:cgp_driver_app/services/api_endpoints.dart';
 import 'package:cgp_driver_app/services/local_services.dart';
 import 'package:cgp_driver_app/services/remote_services.dart';
+import 'package:cgp_driver_app/services/socket_service.dart';
 import 'package:cgp_driver_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -187,26 +188,11 @@ class TripRequestController extends GetxController {
         tripRequestDetails.value=TripRequestDetailsModel.fromJson(data);
         await LocalServices.storeOnGoingTrip(
             tripRequestDetails.value.data?.id);
-
+        Get.find<SocketService>().updateOrderId("${tripRequestDetails.value.data?.orderId}");
         Get.put(OngoingTripController());
         Get.find<OngoingTripController>().tripRequestDetails.value=tripRequestDetails.value;
         Get.find<OngoingTripController>().handleStatus();
 
-/*        Get.put(MapController());
-        Get.find<MapController>().startNavigation(destination: destination);
-        Get.find<MapController>().startLocationUpdates(destination: destination);
-        Get.put(StartTripController());
-        Get.find<StartTripController>().tripRequestDetails.value =
-            tripRequestDetails.value;
-        Get.find<StartTripController>().state.value = TripState.pickup;
-        Get.find<StartTripController>().status.value =
-            TripStatus.movingToDestination;
-        Get.find<StartTripController>().startPoint.value = origin;
-        Get.find<StartTripController>().destinationPoint.value = destination;
-        Get.find<StartTripController>().reachedToDestination.value = false;
-        Get.find<StartTripController>().controlButtonStatus();
-        Get.find<StartTripController>().getDistanceFromCurrentLocation(destination: origin);
-        Get.toNamed(Routes.START_TRIP);*/
       }
       else{
       }

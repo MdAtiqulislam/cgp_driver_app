@@ -65,6 +65,7 @@ class AppPages {
   AppPages._();
 
   static const INITIAL = Routes.SPLASH_SCREEN;
+ // static const INITIAL = Routes.CUSTOM_NAVIGATION;
   // static const INITIAL = Routes.HOME;
 //  static const INITIAL = Routes.TRIP_REQUEST;
 

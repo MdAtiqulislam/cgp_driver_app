@@ -62,7 +62,7 @@ class SingleTripCard extends StatelessWidget {
                     size: 12,
                   ),
                   BodyText(
-                    text: "${tripHistoryModel.deliveryCharge ?? "0"}",
+                    text: tripHistoryModel.riderFee ?? "0",
                     color: AppColors.primaryColor,
                     size: 14,
                   )
