@@ -64,6 +64,7 @@ class SplashScreenController extends GetxController {
         Get.find<SocketService>().updateOrderId("${onGoingTripDetails.value.data?.orderId}");
         Get.find<OngoingTripController>().tripRequestDetails.value=onGoingTripDetails.value;
         Get.find<OngoingTripController>().handleStatus();
+        Get.find<OngoingTripController>().initMessaging();
         Get.toNamed(Routes.ONGOING_TRIP);
       }
     } finally {

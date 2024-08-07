@@ -3,6 +3,7 @@ import 'package:cgp_driver_app/app/modules/messaging/controllers/messaging_contr
 import 'package:cgp_driver_app/app/modules/ongoingTrip/views/trip_info_card.dart';
 import 'package:cgp_driver_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
@@ -20,7 +21,9 @@ import '../../startTrip/controllers/start_trip_controller.dart';
 import '../controllers/ongoing_trip_controller.dart';
 
 class OngoingTripView extends GetView<OngoingTripController> {
-  @override
+  final mapBoxController=Get.put(CustomNavigationController());
+
+   OngoingTripView({super.key});
   Widget build(BuildContext context) {
     return PopScope(
       canPop: controller.status.value == TripStatus.completed.name,
@@ -49,19 +52,31 @@ class OngoingTripView extends GetView<OngoingTripController> {
                       /* StatusSection(
                         trailing: trailingSection(),
                       ),*/
+                     if(mapBoxController.isNavigating.value) SizedBox(
+                        height: 0,
+                        child: MapBoxNavigationView(
+                          options: mapBoxController.options,
+                          onRouteEvent: mapBoxController.onRouteEvent,
+                          onCreated: (MapBoxNavigationViewController controller) {
+                            controller.initialize();
+                          },
+                        ),
+                      ),
+
                       SizedBox(
                         height: AppDimensions.sectionPadding.h,
                       ),
                       GeneralMapWidget(
                           showNavigationButton:
                               controller.showNavigationButton.value,
-                          startNavigation: () {
+                          startNavigation: () async {
                             Get.put(CustomNavigationController());
-
-                            Get.find<CustomNavigationController>().startNavigation(
+                           await Get.find<CustomNavigationController>().startNavigation(
                                 controller.destinationPoint.value.latitude,
-                                controller.destinationPoint.value.longitude);
-                            Get.toNamed(Routes.CUSTOM_NAVIGATION);
+                                controller.destinationPoint.value.longitude).then((_){
+                                  controller.isLoading.value=false;
+                           });
+                          //  Get.toNamed(Routes.CUSTOM_NAVIGATION);
                             /* Get.find<MapController>().openNavigationApps(
                                 startPoint: controller.startPoint.value,
                                 endPoint: controller.destinationPoint.value,

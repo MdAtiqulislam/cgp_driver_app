@@ -170,6 +170,22 @@ String calculateDistance(LatLng start, LatLng end)
   }
 }
 
+
+/*  ******Function to calculate distance using Haversine formula***** */
+Future<double> calculateDistanceInMeter(LatLng destination)
+async {
+  var currentLocation = await getCurrentLocation();
+  LatLng start = LatLng(currentLocation.latitude, currentLocation.longitude);
+
+
+  return Geolocator.distanceBetween(
+    start.latitude,
+    start.longitude,
+    destination.latitude,
+    destination.longitude,
+  );
+}
+
 /* ****Get current Location***** */
 
 

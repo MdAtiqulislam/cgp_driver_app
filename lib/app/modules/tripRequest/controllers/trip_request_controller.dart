@@ -192,6 +192,7 @@ class TripRequestController extends GetxController {
         Get.put(OngoingTripController());
         Get.find<OngoingTripController>().tripRequestDetails.value=tripRequestDetails.value;
         Get.find<OngoingTripController>().handleStatus();
+        Get.find<OngoingTripController>().initMessaging();
 
       }
       else{

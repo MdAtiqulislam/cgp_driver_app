@@ -16,6 +16,7 @@ import '../../../routes/app_pages.dart';
 import '../../completeTrip/controllers/complete_trip_controller.dart';
 import '../../generalMap/general_map_controller.dart';
 import '../../home/views/home_view.dart';
+import '../../messaging/controllers/messaging_controller.dart';
 import '../../tripRequest/models/trip_request_details_model.dart';
 import '../../../../services/api_endpoints.dart';
 import '../../../../services/local_services.dart';
@@ -404,6 +405,21 @@ class OngoingTripController extends GetxController {
         });
 
 
+  }
+
+
+
+  void initMessaging(){
+    Get.put(MessagingController());
+    Get.find<MessagingController>().initValue();
+    Get.find<MessagingController>().imageLink.value =
+       tripRequestDetails.value.data
+            ?.requestFrom?.url ??
+            "";
+    Get.find<MessagingController>().chatWith.value=tripRequestDetails.value.data
+        ?.requestFrom?.name ??
+        "";
+    Get.find<MessagingController>().orderDetails.value=tripRequestDetails.value;
   }
 
 

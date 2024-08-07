@@ -109,6 +109,7 @@ Future<void>_firebaseBackgroundMessagingHandler(RemoteMessage message)async{
 */
 
 import 'package:cgp_driver_app/app/modules/home/controllers/home_controller.dart';
+import 'package:cgp_driver_app/app/modules/ongoingTrip/controllers/ongoing_trip_controller.dart';
 import 'package:cgp_driver_app/services/notification_services.dart';
 import 'package:cgp_driver_app/services/socket_service.dart';
 import 'package:cgp_driver_app/theme/theme.dart';
@@ -146,6 +147,7 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   Get.put(SocketService());
+  Get.put(OngoingTripController());
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.white,
