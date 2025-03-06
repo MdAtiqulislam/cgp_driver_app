@@ -1,6 +1,7 @@
 import 'package:cgp_driver_app/app/modules/statusSection/status_section_controller.dart';
 import 'package:cgp_driver_app/app/routes/app_pages.dart';
 import 'package:cgp_driver_app/common_widgets/custom_ratings.dart';
+import 'package:cgp_driver_app/constraints/header_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -76,7 +77,14 @@ class StatusSection extends StatelessWidget {
                       ),
                       SizedBox(width: AppDimensions.contentPadding.w,),
                       CustomRatingWidget(ratingValue: (controller.rider.value.avgRating?.averageRating??0).toDouble()),
-                      Expanded(child: trailing ?? const SizedBox())
+                      Expanded(
+                          child:Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const HeaderText(text: "Vehicle Rego",size: 12,),
+                          BodyText(text: controller.selectedRiderVehicle.value.licensePlate??"",align: TextAlign.end,)
+                        ],
+                      ))
                     ],
                   ),
               ],

@@ -1,0 +1,4 @@
+<resources>
+    <!-- Define a custom attribute to avoid the error -->
+    <attr name="lStar" format="float" />
+</resources>

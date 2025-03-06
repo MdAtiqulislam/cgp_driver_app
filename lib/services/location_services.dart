@@ -1,5 +1,5 @@
 
-
+/*
 import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class LocationServices{
 
  static late LocationSettings locationSettings;
+
   static Future<Position> getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -92,3 +93,109 @@ class LocationServices{
    return placeMarks;
  }
 }
+
+ */
+
+import 'dart:io';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+class LocationServices {
+  static late LocationSettings locationSettings;
+
+  static Future<Position> getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, cannot request permissions.');
+    }
+
+    // Platform-specific location settings
+    if (Platform.isAndroid) {
+      locationSettings = AndroidSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 100,
+        forceLocationManager: true,
+        intervalDuration: const Duration(seconds: 10),
+        foregroundNotificationConfig: const ForegroundNotificationConfig(
+          notificationText:
+          "The app will continue to receive your location in the background.",
+          notificationTitle: "Location Updates Enabled",
+          enableWakeLock: true,
+        ),
+      );
+    } else if (Platform.isIOS || Platform.isMacOS) {
+      locationSettings = AppleSettings(
+        accuracy: LocationAccuracy.high,
+        activityType: ActivityType.fitness,
+        distanceFilter: 100,
+        pauseLocationUpdatesAutomatically: true,
+        showBackgroundLocationIndicator: false,
+      );
+    } else {
+      locationSettings = const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 100,
+      );
+    }
+
+    try {
+      return await Geolocator.getCurrentPosition();
+    } catch (e) {
+      return Future.error("Failed to get location: $e");
+    }
+  }
+
+  static Future<String> getAddress(LatLng value) async {
+    try {
+      List<Placemark> placeMarks =
+      await placemarkFromCoordinates(value.latitude, value.longitude);
+      Placemark place = placeMarks.first;
+
+      return "${place.street}, ${place.subLocality}, ${place.locality}, ${place.country}";
+    } catch (e) {
+      return "Failed to get address: $e";
+    }
+  }
+
+  static Future<String> getAddressFromMap(LatLng value) async {
+    try {
+      List<Placemark> placeMarks =
+      await placemarkFromCoordinates(value.latitude, value.longitude);
+      Placemark place = placeMarks.first;
+
+      return "${place.street}, ${place.subLocality}, ${place.locality}, ${place.country}";
+    } catch (e) {
+      return "Failed to get address: $e";
+    }
+  }
+
+  static Future<List<Placemark>> getPlaceMarksFromLatLng({
+    required String lat,
+    required String lng,
+  }) async {
+    try {
+      return await placemarkFromCoordinates(double.parse(lat), double.parse(lng));
+    } catch (e) {
+      throw Exception("Failed to get place marks: $e");
+    }
+  }
+}
+

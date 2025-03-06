@@ -105,7 +105,7 @@ class VehicleTypeDropDownField extends StatelessWidget {
                     ),)
                   ],
                 ),
-                Divider()
+                const Divider()
               ],
             ),
           ),

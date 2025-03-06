@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import '../../../../common_widgets/app_button.dart';
 import '../../../../common_widgets/base_screen.dart';
 import '../../../../common_widgets/custom_bottom_nav_bar.dart';
-import '../../../../common_widgets/custom_loading_screen.dart';
 import '../../../../common_widgets/custom_text_field.dart';
 import '../../../../constraints/app_colors.dart';
 import '../../../../constraints/body_text.dart';
@@ -51,7 +50,7 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 5.w),
-              child: BodyText(
+              child: const BodyText(
                 text:
                 "We will send a six digit OTP to your Email.\nPlease type the OTP to reset your password",
                 align: TextAlign.start,
@@ -85,7 +84,7 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
            SizedBox(
              width: AppDimensions.widgetPadding.w,
            ),
-           HeaderText(
+           const HeaderText(
              text: "Back",
              color: AppColors.primaryColor,
            )

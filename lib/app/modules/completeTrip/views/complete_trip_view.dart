@@ -14,12 +14,13 @@ import 'package:get/get.dart';
 import '../../../../common_widgets/app_button.dart';
 import '../../../../common_widgets/custom_loading_screen.dart';
 import '../../../../constraints/app_colors.dart';
-import '../../../../constraints/app_strings.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/complete_trip_controller.dart';
 
 class CompleteTripView extends GetView<CompleteTripController> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  CompleteTripView({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -17,10 +17,6 @@ class MyWalletController extends GetxController {
    await getTodaysEarning();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}

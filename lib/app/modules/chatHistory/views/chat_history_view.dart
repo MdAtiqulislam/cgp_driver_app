@@ -43,7 +43,7 @@ class ChatHistoryView extends GetView<ChatHistoryController> {
                         data: controller.chatHistoryModel.value.data?[index]);
                   },
                   separatorBuilder: (BuildContext context, int index) {
-                    return Divider();
+                    return const Divider();
                   },
                 ),
               ),
@@ -85,19 +85,19 @@ class ChatHistoryView extends GetView<ChatHistoryController> {
             Positioned(
               right: 0,
               child: Container(
-                padding: EdgeInsets.all(4),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.all(4),
+                decoration: const BoxDecoration(
                   color: Colors.red,
                   shape: BoxShape.circle
                 ),
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minWidth: 16,
                   minHeight: 16,
                 ),
                 child: Center(
                   child: Text(
                     '${data?.unreadCount??0}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
@@ -124,7 +124,7 @@ class ChatHistoryView extends GetView<ChatHistoryController> {
           ),
         ],
       ),
-      trailing: Icon(Icons.arrow_forward_ios_sharp, color: AppColors.iconColor),
+      trailing: const Icon(Icons.arrow_forward_ios_sharp, color: AppColors.iconColor),
     );
   }
 

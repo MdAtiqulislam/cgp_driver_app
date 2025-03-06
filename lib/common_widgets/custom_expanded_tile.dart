@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../constraints/app_colors.dart';
-import '../constraints/app_strings.dart';
 import '../constraints/dimensions.dart';
 import '../constraints/header_text.dart';
 

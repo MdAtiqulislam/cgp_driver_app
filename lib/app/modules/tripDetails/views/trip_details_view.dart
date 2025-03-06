@@ -168,9 +168,9 @@ class TripDetailsView extends GetView<TripDetailsController> {
             ],
           ),
           SizedBox(height: AppDimensions.contentPadding.h,),
-          Divider(),
+          const Divider(),
           SizedBox(height: AppDimensions.contentPadding.h,),
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               HeaderText(text: "Client's Ratings:"),
@@ -192,7 +192,7 @@ class TripDetailsView extends GetView<TripDetailsController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        BodyText(
+        const BodyText(
           text: "Route completed",
           color: AppColors.primaryColor,
           size: 10,
@@ -206,7 +206,7 @@ class TripDetailsView extends GetView<TripDetailsController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  HeaderText(
+                  const HeaderText(
                     text: "Pickup Location",
                     color: AppColors.primaryColor,
                     size: 12,
@@ -220,7 +220,7 @@ class TripDetailsView extends GetView<TripDetailsController> {
                 ],
               ),
             ),
-            Icon(
+            const Icon(
               Icons.arrow_forward_outlined,
               color: AppColors.primaryColor,
               size: 20,
@@ -232,7 +232,7 @@ class TripDetailsView extends GetView<TripDetailsController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  HeaderText(
+                  const HeaderText(
                     text: "Drop Point",
                     color: AppColors.primaryColor,
                     size: 12,

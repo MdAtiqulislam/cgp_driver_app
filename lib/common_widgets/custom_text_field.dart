@@ -49,7 +49,6 @@ class CustomTextField extends StatelessWidget {
       this.onEditingCompleted,
       this.inputFormatter,
       this.levelText,
-
       super.key});
 
   @override
@@ -96,7 +95,7 @@ class CustomTextField extends StatelessWidget {
                         }
                       : validator,
                   maxLength: maxLength,
-                  keyboardType: textInputType ?? TextInputType.name,
+                  keyboardType: textInputType,// ?? TextInputType.name,
                   textAlignVertical: TextAlignVertical.center,
                   cursorWidth: .5,
                   decoration: inputDecoration(

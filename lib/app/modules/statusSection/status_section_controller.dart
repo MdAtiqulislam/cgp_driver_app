@@ -13,7 +13,7 @@ import '../editProfile/models/rider_vehicles_model.dart';
 
 class StatusSectionController extends GetxController {
   var isActive = true.obs;
-  var isOnline = true.obs;
+  var isOnline = false.obs;
   var rider = RiderModel().obs;
   var isLoading = false.obs;
   var isLoadingVehicles = false.obs;
@@ -26,6 +26,7 @@ class StatusSectionController extends GetxController {
   void onInit() async {
     super.onInit();
     await getUserData();
+    await getSelectedVehicle();
   }
 
   Future<void> getUserData() async {
@@ -45,12 +46,13 @@ class StatusSectionController extends GetxController {
   }
 
   Future<void> changeOnlineStatus({required bool status}) async {
-
     if(status){
-
       selectVehicle();
     }else{
       isOnline.value=status;
+      selectedRiderVehicle.value=SingleVehicleModel();
+     // await LocalServices().storeSelectedVehicle(SingleVehicleModel());
+      await LocalServices.storeSelectedVehicle(SingleVehicleModel());
       changeStatus();
     }
 
@@ -102,7 +104,8 @@ class StatusSectionController extends GetxController {
         var riderJson=rider.toJson();
         riderJson["is_active"]=isOnline.value;
         rider.value=  RiderModel.fromJson(riderJson);
-        await LocalServices().storeUser(rider.value).then((value){
+       // await LocalServices().storeUser(rider.value).then((value){
+        await LocalServices.storeUser(rider.value).then((value){
           if(isOnline.value){
             // Get.find<SocketService>().disconnect();
             Get.find<SocketService>().startLocationUpdates();
@@ -117,4 +120,8 @@ class StatusSectionController extends GetxController {
       loadingStatus.value=false;
     }
   }
+
+ Future<void> getSelectedVehicle() async{
+    selectedRiderVehicle.value=await LocalServices.getSelectedVehicle()??SingleVehicleModel();
+ }
 }

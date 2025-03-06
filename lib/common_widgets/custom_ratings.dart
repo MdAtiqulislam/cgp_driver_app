@@ -1,5 +1,6 @@
 import 'package:cgp_driver_app/constraints/body_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomRatingWidget extends StatelessWidget {
   final double ratingValue;
@@ -23,13 +24,13 @@ class CustomRatingWidget extends StatelessWidget {
           children: List.generate(5, (index) {
             if (index < fullStars) {
               // Full orange star
-              return Icon(Icons.star, color: Colors.orange,size: starSize,);
+              return Icon(Icons.star, color: Colors.orange,size: starSize.r,);
             } else if (index == fullStars && hasHalfStar) {
               // Half orange star
-              return Icon(Icons.star_half, color: Colors.orange,size: starSize,);
+              return Icon(Icons.star_half, color: Colors.orange,size: starSize.r,);
             } else {
               // Empty gray star
-              return Icon(Icons.star_border, color: Colors.grey,size: starSize,);
+              return Icon(Icons.star_border, color: Colors.grey,size: starSize.r,);
             }
           }),
         ),

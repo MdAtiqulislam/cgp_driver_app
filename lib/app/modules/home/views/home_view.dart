@@ -26,6 +26,7 @@ class HomeView extends StatelessWidget {
               key: scaffoldKey,
               appBar: CustomAppBar(
                 scaffoldKey: scaffoldKey,
+                enableBackButton: false,
               ),
               drawer: MyDrawer(),
               body: RefreshIndicator(

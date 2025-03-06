@@ -13,6 +13,8 @@ import '../../../../constraints/app_colors.dart';
 import '../controllers/image_verification_controller.dart';
 
 class ImageVerificationView extends GetView<ImageVerificationController> {
+  const ImageVerificationView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
@@ -44,7 +46,7 @@ class ImageVerificationView extends GetView<ImageVerificationController> {
           SizedBox(
             height: AppDimensions.sectionPadding.h,
           ),
-          HeaderText(text: "Please take a photo",color: AppColors.primaryColor,)
+          const HeaderText(text: "Please take a photo",color: AppColors.primaryColor,)
         ],
       ),
     );

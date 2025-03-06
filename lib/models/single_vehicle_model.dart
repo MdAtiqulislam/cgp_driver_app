@@ -6,6 +6,7 @@ class SingleVehicleModel {
   final dynamic ownerId;
   final String? brand;
   final String? model;
+  final String? make;
   final String? color;
   final int? vehicleImageCfMediaId;
   final String? licensePlate;
@@ -22,6 +23,7 @@ class SingleVehicleModel {
     this.ownerId,
     this.brand,
     this.model,
+    this.make,
     this.color,
     this.vehicleImageCfMediaId,
     this.licensePlate,
@@ -39,6 +41,7 @@ class SingleVehicleModel {
     ownerId: json["owner_id"],
     brand: json["brand"],
     model: json["model"],
+    make: json["make"],
     color: json["color"],
     year: json["year"],
     vehicleImageCfMediaId: json["vehicle_image_cf_media_id"],
@@ -56,6 +59,7 @@ class SingleVehicleModel {
     "owner_id": ownerId,
     "brand": brand,
     "model": model,
+    "make": make,
     "color": color,
     "year": year,
     "vehicle_image_cf_media_id": vehicleImageCfMediaId,

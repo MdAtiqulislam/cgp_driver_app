@@ -86,8 +86,7 @@ class MyWalletView extends GetView<MyWalletController> {
           ),
           const SizedBox(height: 10),
           HeaderText(text:
-          '${(controller.todaysEarning.value.data?.totalEarnings ?? 0)
-              .toStringAsFixed(2)} AUD',
+          '${(controller.todaysEarning.value.data?.totalEarnings ?? 0)} AUD',
             color: Colors.white,
             size: 28,
           ),
@@ -162,8 +161,8 @@ class MyWalletView extends GetView<MyWalletController> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  (transaction?.transactionType ?? "") == "debit" ? Icon(
-                    Icons.arrow_upward, color: AppColors.errorColor,) : Icon(
+                  (transaction?.transactionType ?? "") == "debit" ? const Icon(
+                    Icons.arrow_upward, color: AppColors.errorColor,) : const Icon(
                     Icons.arrow_downward, color: AppColors.successColor,),
 
                   Column(
@@ -188,8 +187,8 @@ class MyWalletView extends GetView<MyWalletController> {
                   Text(
                     '${(transaction?.transactionType ?? "") == "debit"
                         ? "-"
-                        : "+" }  ${(transaction?.payableAmount ?? 0)
-                        .toStringAsFixed(2)}',
+                        : "+" }  ${(transaction?.netBalance ?? 0)
+                    }',
                     style: TextStyle(
                       fontSize: 16,
                       color: (transaction?.transactionType ?? "") == "debit"

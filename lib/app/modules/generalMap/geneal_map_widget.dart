@@ -3,7 +3,6 @@ import 'package:cgp_driver_app/app/modules/home/controllers/home_controller.dart
 import 'package:cgp_driver_app/constraints/app_colors.dart';
 import 'package:cgp_driver_app/constraints/dimensions.dart';
 import 'package:cgp_driver_app/constraints/header_text.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -44,7 +43,7 @@ class GeneralMapWidget extends StatelessWidget {
       this.zoomEnable=false
       });
 
-  final mapController = Get.put(MapController());
+  final mapController = Get.put(GeneralMapController());
   @override
   Widget build(BuildContext context) {
 
@@ -120,7 +119,7 @@ class GeneralMapWidget extends StatelessWidget {
                                         startNavigation!();
                                       }
                                     },
-                                    child: Row(
+                                    child: const Row(
                                       children: [
                                         Icon(
                                           Icons.navigation_sharp,
@@ -139,7 +138,7 @@ class GeneralMapWidget extends StatelessWidget {
                                   bottom: 10,
                                   right: 10,
                                   child: Container(
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: AppColors.primaryColor
                                     ),
@@ -149,7 +148,7 @@ class GeneralMapWidget extends StatelessWidget {
                                         Get.put(HomeController());
                                         Get.find<HomeController>().reloadData();
                                       },
-                                      icon: Icon(Icons.refresh,color: Colors.white,),
+                                      icon: const Icon(Icons.refresh,color: Colors.white,),
                                     ),
                                   ),
                                 ),

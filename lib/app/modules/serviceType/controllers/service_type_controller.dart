@@ -6,15 +6,7 @@ class ServiceTypeController extends GetxController {
 
 
   var selectedServiceType="";
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}

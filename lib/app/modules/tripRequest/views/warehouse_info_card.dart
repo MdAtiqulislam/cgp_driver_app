@@ -311,7 +311,8 @@ class WareHouseInfoCard extends GetView<TripRequestController> {
               AppButton(
                 text: "Decline",
                 onTap: () {
-                  onDecline();
+                  //onDecline();
+                  Get.back();
                 },
                 bgColor: AppColors.errorColor,
                 borderRadius: 10,

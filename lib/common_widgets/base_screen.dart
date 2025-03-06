@@ -53,7 +53,7 @@ class BaseScreen extends StatelessWidget {
                           ),
                           Container(
                             clipBehavior: Clip.hardEdge,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                                 shape: BoxShape.circle
                             ),
                             child: Image.asset(AppImagePath.appIcon,scale: 3,),),

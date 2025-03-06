@@ -20,7 +20,7 @@ import '../controllers/start_trip_controller.dart';
 class StartTripView extends GetView<StartTripController> {
   StartTripView({super.key});
 
-  final mapController = Get.put(MapController());
+  final mapController = Get.put(GeneralMapController());
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class StartTripView extends GetView<StartTripController> {
                       GeneralMapWidget(
                           showNavigationButton: true,
                           startNavigation: () {
-                            Get.find<MapController>().openNavigationApps(
+                            Get.find<GeneralMapController>().openNavigationApps(
                                 startPoint: controller.startPoint.value,
                                 endPoint: controller.destinationPoint.value,
                                 context: Get.context!);

@@ -44,7 +44,7 @@ class TestChatView extends GetView<TestChatController> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: const Icon(Icons.send),
                   onPressed: () {
                    /* chatController.sendMessage(
                       chatId,
@@ -55,7 +55,7 @@ class TestChatView extends GetView<TestChatController> {
                     _messageController.clear();
                     _scrollController.animateTo(
                       _scrollController.position.minScrollExtent,
-                      duration: Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 300),
                       curve: Curves.easeOut,
                     );
                   },

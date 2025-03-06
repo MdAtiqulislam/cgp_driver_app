@@ -13,10 +13,6 @@ class TripHistoryController extends GetxController {
     getTripHistory();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}

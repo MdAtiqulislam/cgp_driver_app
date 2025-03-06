@@ -3,7 +3,11 @@ import 'package:cgp_driver_app/app/modules/customNavigation/controllers/custom_n
 import 'package:cgp_driver_app/common_widgets/app_button.dart';
 import 'package:cgp_driver_app/constraints/body_text.dart';
 import 'package:cgp_driver_app/services/socket_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
+import 'package:flutter_mapbox_navigation/src/models/options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -12,6 +16,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../constraints/app_colors.dart';
 import '../../../../constraints/dimensions.dart';
 import '../../../../constraints/header_text.dart';
+import '../../../../utils/delivery_proof_image_upload.dart';
 import '../../../routes/app_pages.dart';
 import '../../completeTrip/controllers/complete_trip_controller.dart';
 import '../../generalMap/general_map_controller.dart';
@@ -28,7 +33,7 @@ import '../../../../utils/utils.dart';
 class OngoingTripController extends GetxController {
   var status = "".obs;
   var isLoading = false.obs;
-  var isExpand = false.obs;
+  var isExpand = true.obs;
   var actionButtonText = "".obs;
   var statusText = "".obs;
   var distance = "".obs;
@@ -36,8 +41,8 @@ class OngoingTripController extends GetxController {
   var showNavigationButton = false.obs;
   var showLocation = "pickup".obs;
 
-  var startPoint = LatLng(0.0, 0.0).obs;
-  var destinationPoint = LatLng(0.0, 0.0).obs;
+  var startPoint = const LatLng(0.0, 0.0).obs;
+  var destinationPoint = const LatLng(0.0, 0.0).obs;
 
   var elapsedTime = ''.obs;
   Timer? timer;
@@ -45,20 +50,18 @@ class OngoingTripController extends GetxController {
   var showTimer = false.obs;
 
   var tripRequestDetails = TripRequestDetailsModel().obs;
-  final MapController mapController = Get.put(MapController());
+  final GeneralMapController mapController = Get.put(GeneralMapController());
   StreamSubscription<Position>? positionStream;
 
   String nextStatus = "";
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
+ late MapBoxOptions navigationOption;
+  var _platformVersion="".obs;
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
+  var isButtonEnabled=true.obs;
+
+
+
 
   @override
   void onClose() {
@@ -90,6 +93,7 @@ class OngoingTripController extends GetxController {
 
   Future<void> handleAcceptedStatus() async {
     showNavigationButton.value = true;
+    distanceInMeters.value=200;
     statusText.value = "Moving to Pickup point";
     actionButtonText.value = "Moving to Pickup point";
     nextStatus = OrderStatus.reachedAtPickupPoint.name;
@@ -97,7 +101,7 @@ class OngoingTripController extends GetxController {
       tripRequestDetails.value.data?.pickupLocation?.latitude ?? 0.0,
       tripRequestDetails.value.data?.pickupLocation?.longitude ?? 0.0,
     );
-    Get.find<MapController>().startNavigation(destination: destinationPoint.value);
+    Get.find<GeneralMapController>().startNavigation(destination: destinationPoint.value);
     var currentLocation = await getCurrentLocation();
     startPoint.value = LatLng(currentLocation.latitude, currentLocation.longitude);
 
@@ -126,8 +130,9 @@ class OngoingTripController extends GetxController {
   Future<void> handlePickedUpStatus() async {
     showLocation.value = "destination";
     showNavigationButton.value = true;
+    distanceInMeters.value=200;
     actionButtonText.value = "Moving to Destination point";
-    statusText.value = "Moving to Destination point";
+    statusText.value = "Picked up and moving to destination point";
     nextStatus = OrderStatus.reachedAtDeliveryPoint.name;
     showTimer.value = false;
     stopTimer();
@@ -142,7 +147,7 @@ class OngoingTripController extends GetxController {
       tripRequestDetails.value.data?.pickupLocation?.longitude ?? 0.0,
     );
 
-    Get.find<MapController>().startNavigation(destination: destinationPoint.value);
+    Get.find<GeneralMapController>().startNavigation(destination: destinationPoint.value);
     positionStream?.cancel();
     getDistanceFromCurrentLocation(destination: destinationPoint.value);
   }
@@ -189,6 +194,7 @@ class OngoingTripController extends GetxController {
             Get.toNamed(Routes.COMPLETE_TRIP);
             Get.put(CompleteTripController());
             Get.find<CompleteTripController>().tripRequestDetails.value = tripRequestDetails.value;
+            showDeliveryProofDialog(Get.context!, "${tripRequestDetails.value.data?.deliveryId??""}");
           } else {
             handleStatus();
           }
@@ -216,14 +222,20 @@ class OngoingTripController extends GetxController {
         destination.latitude,
         destination.longitude,
       );
-
-      if (distanceInMeters.value <= 700) {
+      if (distanceInMeters.value <= 150) {
         if (nextStatus == OrderStatus.reachedAtPickupPoint.name) {
           actionButtonText.value = "Arrived at pickup point";
         } else if (nextStatus == OrderStatus.reachedAtDeliveryPoint.name) {
           actionButtonText.value = "Arrived at destination point";
         }
       }
+/*      if(distanceInMeters.value<=150 && showNavigationButton.value){
+        isButtonEnabled.value=true;
+      }else {
+        print("Button disabled");
+        isButtonEnabled.value=false;
+      }*/
+
     });
   }
 
@@ -279,7 +291,7 @@ class OngoingTripController extends GetxController {
 
                 ListTile(
                   leading: const Icon(Icons.navigation, color: AppColors.primaryColor),
-                  title: Text('Tradebar Navigation'),
+                  title: const Text('Tradebar Navigation'),
                   onTap: () async {
                     Get.put(CustomNavigationController());
                   //  Get.find<CustomNavigationController>().destination=destinationPoint.value;
@@ -290,11 +302,13 @@ class OngoingTripController extends GetxController {
                    // Get.find<CustomNavigationController>().addMarkers(startPoint.value, destinationPoint.value);
                     Get.find<CustomNavigationController>().startNavigation(destinationPoint.value.latitude,destinationPoint.value.longitude);
 
-                    print("StartPoint:$startPoint, endpoint:$destinationPoint");
+                    if (kDebugMode) {
+                      print("StartPoint:$startPoint, endpoint:$destinationPoint");
+                    }
                     Get.toNamed(Routes.CUSTOM_NAVIGATION);
                      },
                 ),
-                Divider(),
+                const Divider(),
                 // List of available navigation apps
                 ...availableApps.map((app) {
                   return ListTile(
@@ -422,5 +436,29 @@ class OngoingTripController extends GetxController {
     Get.find<MessagingController>().orderDetails.value=tripRequestDetails.value;
   }
 
+
+
+  Future<void> initialize() async {
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+
+  navigationOption = MapBoxNavigation.instance.getDefaultOptions();
+    navigationOption.simulateRoute = true;
+   // navigationOption.language = "en";
+    //_navigationOption.initialLatitude = 36.1175275;
+    //_navigationOption.initialLongitude = -115.1839524;
+    // MapBoxNavigation.instance.registerRouteEventListener(_onEmbeddedRouteEvent);
+
+    String? platformVersion;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      platformVersion = await MapBoxNavigation.instance.getPlatformVersion();
+    } on PlatformException {
+      platformVersion = 'Failed to get platform version.';
+    }
+
+  _platformVersion.value = platformVersion??"";
+  }
 
 }

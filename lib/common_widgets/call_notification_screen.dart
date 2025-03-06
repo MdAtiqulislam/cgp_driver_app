@@ -7,25 +7,25 @@ class CallNotificationScreen extends StatelessWidget {
   final String callerNumber;
 
   const CallNotificationScreen({
-    Key? key,
+    super.key,
     required this.callerName,
     required this.callerNumber,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Incoming Call'),
+        title: const Text('Incoming Call'),
         actions: [
           IconButton(
-            icon: Icon(Icons.call),
+            icon: const Icon(Icons.call),
             onPressed: () {
               // Handle call answer action
             },
           ),
           IconButton(
-            icon: Icon(Icons.cancel),
+            icon: const Icon(Icons.cancel),
             onPressed: () {
               // Handle call reject action
               Get.back();

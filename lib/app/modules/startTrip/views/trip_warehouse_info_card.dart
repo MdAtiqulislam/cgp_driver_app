@@ -15,7 +15,7 @@ class TripWareHouseInfoCard extends GetView<StartTripController> {
   // final bool isExpanded;
   // final String actionButtonText;
   final Function() onTap;
-  final mapController = Get.put(MapController());
+  final mapController = Get.put(GeneralMapController());
 
   TripWareHouseInfoCard(
       {
@@ -60,7 +60,7 @@ class TripWareHouseInfoCard extends GetView<StartTripController> {
                         SizedBox(
                           height: AppDimensions.contentPadding.h,
                         ),
-                        Divider(),
+                        const Divider(),
                        // notificationSection(),
                         tripStatusSection(),
                         locationSection(),
@@ -103,23 +103,21 @@ class TripWareHouseInfoCard extends GetView<StartTripController> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            Container(
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.circle,
-                    color: AppColors.successColor,
-                    size: 10,
-                  ),
-                  SizedBox(
-                    width: AppDimensions.contentPadding.w,
-                  ),
-                  BodyText(
-                    text: "Ongoing",
-                    color: AppColors.primaryColor,
-                  )
-                ],
-              ),
+            Row(
+              children: [
+                const Icon(
+                  Icons.circle,
+                  color: AppColors.successColor,
+                  size: 10,
+                ),
+                SizedBox(
+                  width: AppDimensions.contentPadding.w,
+                ),
+                const BodyText(
+                  text: "Ongoing",
+                  color: AppColors.primaryColor,
+                )
+              ],
             )
           ],
         ),
@@ -176,7 +174,7 @@ class TripWareHouseInfoCard extends GetView<StartTripController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              HeaderText(
+              const HeaderText(
                 text: "Pickup Location",
                 size: 12,
                 color: AppColors.primaryColor,

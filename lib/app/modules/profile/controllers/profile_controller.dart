@@ -13,10 +13,6 @@ class ProfileController extends GetxController {
     await getUserData();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}

@@ -8,7 +8,7 @@ class AnimatedTimer extends StatefulWidget {
   final Color textColor;
   final double textSize;
 
-  AnimatedTimer({required this.time, required this.textColor, required this.textSize});
+  const AnimatedTimer({super.key, required this.time, required this.textColor, required this.textSize});
 
   @override
   _AnimatedTimerState createState() => _AnimatedTimerState();
@@ -23,7 +23,7 @@ class _AnimatedTimerState extends State<AnimatedTimer> with SingleTickerProvider
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       vsync: this,
     )..repeat(reverse: true);
 
@@ -58,7 +58,7 @@ class _AnimatedTimerState extends State<AnimatedTimer> with SingleTickerProvider
                 blurRadius: _blurAnimation.value,
                // spreadRadius: 2,
               ),
-              BoxShadow(
+              const BoxShadow(
                 color: AppColors.shadowColor,
                blurRadius: 1
                // blurRadius: _blurAnimation.value,

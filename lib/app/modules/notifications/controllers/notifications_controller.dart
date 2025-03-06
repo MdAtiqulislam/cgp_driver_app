@@ -11,15 +11,7 @@ class NotificationsController extends GetxController {
   var isLoading = false.obs;
   var notificationsModel = NotificationsModel().obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}

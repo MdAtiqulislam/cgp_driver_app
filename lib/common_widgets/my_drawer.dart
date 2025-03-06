@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cgp_driver_app/app/routes/app_pages.dart';
 import 'package:cgp_driver_app/constraints/body_text.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +50,7 @@ class MyDrawer extends StatelessWidget {
                           bgColor: AppColors.primaryColor.withOpacity(.5),
                           fit: BoxFit.cover,
                         ),
-                        Positioned(
+                        /*Positioned(
                           bottom: 0,
                           right: 0,
                           child: Container(
@@ -61,10 +63,7 @@ class MyDrawer extends StatelessWidget {
                               child: InkWell(
                                 splashColor: Colors.white54,
                                 onTap: () {
-                                  // controller.chooseImage();
-
-                                  //  Get.bottomSheet(choseImage());
-                                },
+                                  },
                                 child: const Padding(
                                   padding: EdgeInsets.all(5.0),
                                   child: Icon(
@@ -76,7 +75,7 @@ class MyDrawer extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
                     SizedBox(
@@ -95,8 +94,7 @@ class MyDrawer extends StatelessWidget {
                       maxLine: 3,
                     ),
                     BodyText(
-                      text:
-                          controller.rider.value.phone ?? "",
+                      text:"04${controller.rider.value.phone ?? ""}",
                       align: TextAlign.start,
                       maxLine: 3,
                     ),
@@ -140,7 +138,7 @@ class MyDrawer extends StatelessWidget {
                     drawerButton(
                         onTap: () {
                           Get.back();
-                          Get.toNamed(Routes.MESSAGING);
+                          Get.toNamed(Routes.SUPPORT);
                           //Get.toNamed(Routes.SUPPORT);
                         },
                         imageIcon: AppImagePath.support,
@@ -154,6 +152,15 @@ class MyDrawer extends StatelessWidget {
                         icon: const Icon(Icons.chat,size: 16,color: AppColors.iconColor,),
                         imageIcon: AppImagePath.support,
                         text: "Messages"),
+                    drawerButton(
+                        onTap: () {
+                          Get.back();
+                          Get.toNamed(Routes.FAQ_PAGE);
+                          //Get.toNamed(Routes.SUPPORT);
+                        },
+                        icon: const Icon(Icons.question_mark_rounded,size: 16,color: AppColors.iconColor,),
+                        imageIcon: AppImagePath.support,
+                        text: "How To"),
                     const Divider(),
                     drawerButton(
                         onTap: () {
@@ -161,6 +168,14 @@ class MyDrawer extends StatelessWidget {
                         },
                         imageIcon: AppImagePath.logoutIcon,
                         text: "Log out"),
+
+                   if(Platform.isIOS) drawerButton(
+                        onTap: () {
+                          controller.deleteAccount();
+                        },
+                        imageIcon:"",
+                       icon:const Icon(Icons.delete,color: AppColors.iconColor,size: 16,),
+                        text: "Delete Account"),
                   ],
                 ),
               ),

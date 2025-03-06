@@ -12,15 +12,7 @@ class ReviewAndRatingsController extends GetxController {
   var rating = 5.0.obs;
   var reviewController = TextEditingController();
   var isLoading=false.obs;
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}

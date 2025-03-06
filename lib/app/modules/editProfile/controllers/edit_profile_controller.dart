@@ -1,5 +1,4 @@
 import 'package:cgp_driver_app/app/modules/editProfile/models/bank_history_model.dart';
-import 'package:cgp_driver_app/app/modules/editProfile/models/rider_profile_edit_model.dart';
 import 'package:cgp_driver_app/app/modules/editProfile/models/rider_vehicles_model.dart';
 import 'package:cgp_driver_app/app/modules/editProfile/models/vehicle_type_model.dart';
 import 'package:cgp_driver_app/app/modules/profile/controllers/profile_controller.dart';
@@ -49,7 +48,6 @@ class EditProfileController extends GetxController {
   var licencePlateController = TextEditingController();
   var registrationNumberController = TextEditingController();
   var drivingLicenseController = TextEditingController();
-
  // var bankNameController = TextEditingController();
   var bankAccountNumberController = TextEditingController();
   var bankAccountHolderNameController = TextEditingController();
@@ -70,20 +68,19 @@ class EditProfileController extends GetxController {
   var selectedBank = BankInfoModel().obs;
   var isDefaultBank = false.obs;
 
+
+
   @override
   void onInit() async {
     super.onInit();
+    yearList.value = generateBackwardYearList(20);
+    await getVehicleTypeList();
     await getUserData();
     await getVehicleInfo();
     await getBankInfoRecord();
-    await getVehicleTypeList();
-    yearList.value = generateBackwardYearList(20);
+
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}
@@ -91,8 +88,6 @@ class EditProfileController extends GetxController {
   Future<void> getUserData() async {
     await LocalServices.getUser().then((value) {
       if (value != null) {
-
-        print(value.toJson());
         rider.value = value;
         firstNameController.text = rider.value.firstName ?? "";
         lastNameController.text = rider.value.lastName ?? "";
@@ -120,7 +115,8 @@ class EditProfileController extends GetxController {
   }
 
   Future<void> selectImage(
-      {required ImageSource source, CropStyle? cropStyle,required String imageType}) async {
+      {required ImageSource source, CropStyle? cropStyle,required String imageType})
+  async {
     picImage(source).then((value) async {
       if (value != null) {
         Get.back();
@@ -144,19 +140,19 @@ class EditProfileController extends GetxController {
               }
             }
 
-
-
           }
         });
       }
     });
   }
 
+
+
   void selectDateOfBirth() async {
     final DateTime? picked = await showDatePicker(
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
+      lastDate: DateTime.now(),
       context: Get.context!,
     );
     if (picked != null) {
@@ -185,11 +181,19 @@ class EditProfileController extends GetxController {
           fieldName: 'profile_image',
           requestType: "PATCH");
       if (response != null) {
-        RiderProfileUpdateModel riderProfileUpdateModel =
-            RiderProfileUpdateModel.fromJson(response);
-        await LocalServices()
-            .storeUser(riderProfileUpdateModel.data ?? RiderModel());
+        var riderJason=rider.value.toJson();
+        riderJason["first_name"]=firstNameController.text;
+        riderJason["last_name"]=lastNameController.text;
+        riderJason["phone"]=phoneController.text;
+        riderJason["email"]=emailController.text;
+        riderJason["date_of_birth"]=dateOfBirthController.text;
+        riderJason["driving_license_number"]=drivingLicenseController.text;
+        riderJason["gender"]=selectedGender;
+        rider.value=RiderModel.fromJson(riderJason);
+        //await LocalServices().storeUser(rider.value);
+        await LocalServices.storeUser(rider.value);
         reloadData();
+        resetFields();
         CustomSnackBar(msg: response["message"], isSuccess: true)
             .showSnackBar();
       } else {
@@ -213,6 +217,8 @@ class EditProfileController extends GetxController {
   }
 
   Future<void> getVehicleTypeList() async {
+
+    loadingVehicleInfo.value=true;
     var endPoint = APIEndPoints.getVehicleType;
     var response = await RemoteServices.getRequest(endPoint: endPoint);
     if (response != null) {
@@ -237,6 +243,7 @@ class EditProfileController extends GetxController {
         Get.back();
         getVehicleInfo();
         reloadData();
+        resetFields();
 
         CustomSnackBar(
           msg: response["message"],
@@ -299,13 +306,14 @@ class EditProfileController extends GetxController {
         filePaths: [frontImage, backImage],
         fieldNames: ["vehicle_front_image", "vehicle_back_image"],
         endPoint: endPoint,
-        requestType: "POST",
+        requestType: "PUT",
         body: body,
       );
       if (response != null) {
         Get.back();
         getVehicleInfo();
         reloadData();
+        resetFields();
 
         CustomSnackBar(
           msg: response["message"],
@@ -359,7 +367,6 @@ class EditProfileController extends GetxController {
             (value) => value.id == selectedVehicleModel.value.type!.id)];
     brandController.text = selectedVehicleModel.value.brand ?? "";
     modelController.text = selectedVehicleModel.value.model ?? "";
-    colorController.text = selectedVehicleModel.value.color ?? "";
     licencePlateController.text = selectedVehicleModel.value.licensePlate ?? "";
     registrationNumberController.text =
         selectedVehicleModel.value.registrationNumber ?? "";
@@ -372,7 +379,6 @@ class EditProfileController extends GetxController {
       "type_id": selectedVehicleType.typeId.toString(),
       "brand": brandController.text,
       "model": modelController.text,
-      //"color": colorController.text,
       "license_plate": licencePlateController.text,
       "registration_number": licencePlateController.text,
       "year": selectedYear,
@@ -401,6 +407,7 @@ class EditProfileController extends GetxController {
           endPoint: endPoint, body: body);
       if (response != null) {
         Get.back();
+        resetFields();
         CustomSnackBar(msg: response["message"], isSuccess: true)
             .showSnackBar();
         await getBankInfoRecord();
@@ -438,6 +445,7 @@ class EditProfileController extends GetxController {
       var response=await RemoteServices.patchRequestWithJson(endPoint: endPoint,body: body);
       if(response!=null){
         Get.back();
+        resetFields();
         CustomSnackBar(
           msg: response["message"],
           isSuccess: true
@@ -452,5 +460,34 @@ class EditProfileController extends GetxController {
     } finally {
       isUpdating.value=false;
     }
+  }
+
+  void resetFields(){
+     dateOfBirthController.text="";
+     firstNameController.text="";
+     lastNameController.text="";
+     phoneController.text="";
+     emailController.text="";
+     brandController.text="";
+     modelController.text="";
+     colorController.text="";
+     licencePlateController.text="";
+     registrationNumberController.text="";
+     drivingLicenseController.text="";
+     bankAccountNumberController.text="";
+     bankAccountHolderNameController.text="";
+     bankBSBController.text="";
+    // base64ImageProfile.value = "";
+     base64ImageVehicleFront.value = "";
+     base64ImageVehicleBack.value = "";
+      frontImage = "";
+      backImage = "";
+      selectedGender = "MALE";
+      selectedVehicleType = SingleVehicleTypeModel();
+      selectedVehicleModel.value = SingleVehicleModel();
+      selectedYear = DateTime.now().year.toString();
+
+      selectedBank = BankInfoModel().obs;
+      isDefaultBank.value = false;
   }
 }

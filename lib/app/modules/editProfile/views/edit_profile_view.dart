@@ -6,6 +6,7 @@ import 'package:cgp_driver_app/common_widgets/custom_drop_down_field.dart';
 import 'package:cgp_driver_app/common_widgets/custom_expanded_tile.dart';
 import 'package:cgp_driver_app/common_widgets/custom_network_image.dart';
 import 'package:cgp_driver_app/common_widgets/custom_phone_text_field.dart';
+import 'package:cgp_driver_app/common_widgets/custom_ratings.dart';
 import 'package:cgp_driver_app/common_widgets/empty_screen.dart';
 import 'package:cgp_driver_app/common_widgets/vehicle_type_dropdown.dart';
 import 'package:cgp_driver_app/constraints/app_strings.dart';
@@ -120,44 +121,12 @@ class EditProfileView extends GetView<EditProfileController> {
             Positioned(
               right: AppDimensions.horizontalPadding.w,
               top: AppDimensions.contentPadding.h,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.star,
-                        color: AppColors.warningColor,
-                        size: 15,
-                      ),
-                      Icon(
-                        Icons.star,
-                        color: AppColors.warningColor,
-                        size: 15,
-                      ),
-                      Icon(
-                        Icons.star,
-                        color: AppColors.warningColor,
-                        size: 15,
-                      ),
-                      Icon(
-                        Icons.star,
-                        color: AppColors.warningColor,
-                        size: 15,
-                      ),
-                      Icon(
-                        Icons.star,
-                        color: AppColors.inactiveColor,
-                        size: 15,
-                      ),
-                    ],
-                  ),
-                  HeaderText(
-                    text: "Rating: 4",
-                    size: 12,
-                  )
-                ],
-              ),
+              child: CustomRatingWidget(
+                ratingValue: double.parse(
+                    "${controller.rider.value.avgRating?.averageRating ?? 0}"),
+                alignment: CrossAxisAlignment.end,
+              )
+              ,
             )
           ],
         ),
@@ -206,6 +175,7 @@ class EditProfileView extends GetView<EditProfileController> {
                       AppButton(
                         text: "Add New",
                         onTap: () {
+                          controller.resetFields();
                           Get.bottomSheet(
                             isScrollControlled: true,
                             ignoreSafeArea: false,
@@ -245,6 +215,7 @@ class EditProfileView extends GetView<EditProfileController> {
                       AppButton(
                         text: "Add New",
                         onTap: () {
+                          controller.resetFields();
                           Get.bottomSheet(
                             isScrollControlled: true,
                             ignoreSafeArea: false,
@@ -275,7 +246,7 @@ class EditProfileView extends GetView<EditProfileController> {
                 text: "Email: ${controller.rider.value.email ?? "N/A"}",
               ),
               BodyText(
-                text: "Phone: ${controller.rider.value.phone ?? "N/A"}",
+                text: "Phone: 04${controller.rider.value.phone ?? "N/A"}",
               ),
               BodyText(
                 text: "Gender: ${controller.rider.value.gender ?? "N/A"}",
@@ -452,8 +423,8 @@ class EditProfileView extends GetView<EditProfileController> {
                                           fit: BoxFit.cover,
                                         )
                                       : Container(
-                                          padding: EdgeInsets.all(1),
-                                          decoration: BoxDecoration(
+                                          padding: const EdgeInsets.all(1),
+                                          decoration: const BoxDecoration(
                                             color: AppColors.primaryColor,
                                             shape: BoxShape.circle,
                                           ),
@@ -461,7 +432,7 @@ class EditProfileView extends GetView<EditProfileController> {
                                             width: 100,
                                             height: 100,
                                             clipBehavior: Clip.hardEdge,
-                                            decoration: BoxDecoration(
+                                            decoration: const BoxDecoration(
                                               shape: BoxShape.circle,
                                             ),
                                             child: Image.memory(
@@ -571,7 +542,6 @@ class EditProfileView extends GetView<EditProfileController> {
                                   itemList: controller.genders,
                                   onChange: (value) {
                                     controller.selectedGender = value ?? "";
-                                    print("Gender: $value");
                                   }),
                               /*   SizedBox(
                                     height: AppDimensions.contentPadding.h,
@@ -710,7 +680,8 @@ class EditProfileView extends GetView<EditProfileController> {
                                                               .borderRadius.r),
                                                 ),
                                                 child: Container(
-                                                  padding: EdgeInsets.all(10),
+                                                  padding:
+                                                      const EdgeInsets.all(10),
                                                   width: double.infinity,
                                                   height: 180.h,
                                                   clipBehavior: Clip.hardEdge,
@@ -734,7 +705,8 @@ class EditProfileView extends GetView<EditProfileController> {
                                                 ),
                                               )
                                             : Container(
-                                          padding: const EdgeInsets.all(10),
+                                                padding:
+                                                    const EdgeInsets.all(10),
                                                 width: double.infinity,
                                                 height: 180.h,
                                                 clipBehavior: Clip.hardEdge,
@@ -770,14 +742,16 @@ class EditProfileView extends GetView<EditProfileController> {
                                             height: 80,
                                             child: Card(
                                               child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
                                                 child: Row(
                                                   children: [
                                                     const Expanded(
                                                       child: HeaderText(
                                                         text:
                                                             "Upload vehicle front image with number plate",
-                                                        color: AppColors.primaryColor,
+                                                        color: AppColors
+                                                            .primaryColor,
                                                         maxLine: 3,
                                                         size: 12,
                                                         resizeable: false,
@@ -788,8 +762,10 @@ class EditProfileView extends GetView<EditProfileController> {
                                                           .contentPadding.w,
                                                     ),
                                                     const Icon(
-                                                      Icons.cloud_upload_outlined,
-                                                      color: AppColors.primaryColor,
+                                                      Icons
+                                                          .cloud_upload_outlined,
+                                                      color: AppColors
+                                                          .primaryColor,
                                                     )
                                                   ],
                                                 ),
@@ -806,64 +782,66 @@ class EditProfileView extends GetView<EditProfileController> {
                                     child: Column(
                                       children: [
                                         controller.base64ImageVehicleBack.value
-                                            .isEmpty
+                                                .isEmpty
                                             ? Container(
-                                          clipBehavior: Clip.hardEdge,
-                                          decoration: BoxDecoration(
-                                            boxShadow: const [
-                                              BoxShadow(
-                                                  color: AppColors
-                                                      .primaryColor,
-                                                  blurRadius: 10)
-                                            ],
-                                            color: Colors.white,
-                                            borderRadius:
-                                            BorderRadius.circular(
-                                                AppDimensions
-                                                    .borderRadius.r),
-                                          ),
-                                          child: Container(
-                                            padding: EdgeInsets.all(10),
-                                            width: double.infinity,
-                                            height: 180.h,
-                                            clipBehavior: Clip.hardEdge,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  AppDimensions
-                                                      .borderRadius
-                                                      .r),
-                                            ),
-                                            child: CustomNetworkImage(
-                                              image: controller
-                                                  .selectedVehicleModel
-                                                  .value
-                                                  .vehicleBackImageUrl ??
-                                                  "",
-                                              fit: BoxFit.contain,
-                                              localImage: AppImagePath
-                                                  .placeholderVehicle,
-                                            ),
-                                          ),
-                                        )
+                                                clipBehavior: Clip.hardEdge,
+                                                decoration: BoxDecoration(
+                                                  boxShadow: const [
+                                                    BoxShadow(
+                                                        color: AppColors
+                                                            .primaryColor,
+                                                        blurRadius: 10)
+                                                  ],
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          AppDimensions
+                                                              .borderRadius.r),
+                                                ),
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  width: double.infinity,
+                                                  height: 180.h,
+                                                  clipBehavior: Clip.hardEdge,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            AppDimensions
+                                                                .borderRadius
+                                                                .r),
+                                                  ),
+                                                  child: CustomNetworkImage(
+                                                    image: controller
+                                                            .selectedVehicleModel
+                                                            .value
+                                                            .vehicleBackImageUrl ??
+                                                        "",
+                                                    fit: BoxFit.contain,
+                                                    localImage: AppImagePath
+                                                        .placeholderVehicle,
+                                                  ),
+                                                ),
+                                              )
                                             : Container(
-                                          padding: EdgeInsets.all(10),
-                                          width: double.infinity,
-                                          height: 180.h,
-                                          clipBehavior: Clip.hardEdge,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.circular(
-                                                AppDimensions
-                                                    .borderRadius.r),
-                                          ),
-                                          child: Image.memory(
-                                            base64Decode(controller
-                                                .base64ImageVehicleBack
-                                                .value),
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
+                                                padding:
+                                                    const EdgeInsets.all(10),
+                                                width: double.infinity,
+                                                height: 180.h,
+                                                clipBehavior: Clip.hardEdge,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          AppDimensions
+                                                              .borderRadius.r),
+                                                ),
+                                                child: Image.memory(
+                                                  base64Decode(controller
+                                                      .base64ImageVehicleBack
+                                                      .value),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
                                         SizedBox(
                                           height: AppDimensions.widgetPadding.h,
                                         ),
@@ -874,7 +852,7 @@ class EditProfileView extends GetView<EditProfileController> {
                                               ignoreSafeArea: false,
                                               choseImage(
                                                   cropStyle:
-                                                  CropStyle.rectangle,
+                                                      CropStyle.rectangle,
                                                   imageType: ImageType
                                                       .vehicleBack.name),
                                             );
@@ -883,14 +861,16 @@ class EditProfileView extends GetView<EditProfileController> {
                                             height: 80,
                                             child: Card(
                                               child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
                                                 child: Row(
                                                   children: [
                                                     const Expanded(
                                                       child: HeaderText(
                                                         text:
-                                                        "Upload vehicle back image",
-                                                        color: AppColors.primaryColor,
+                                                            "Upload vehicle back image",
+                                                        color: AppColors
+                                                            .primaryColor,
                                                         maxLine: 3,
                                                         size: 12,
                                                         resizeable: false,
@@ -901,8 +881,10 @@ class EditProfileView extends GetView<EditProfileController> {
                                                           .contentPadding.w,
                                                     ),
                                                     const Icon(
-                                                      Icons.cloud_upload_outlined,
-                                                      color: AppColors.primaryColor,
+                                                      Icons
+                                                          .cloud_upload_outlined,
+                                                      color: AppColors
+                                                          .primaryColor,
                                                     )
                                                   ],
                                                 ),
@@ -937,8 +919,8 @@ class EditProfileView extends GetView<EditProfileController> {
                                 height: AppDimensions.contentPadding.h,
                               ),
                               CustomTextField(
-                                levelText: "Brand",
-                                hintText: "Brand",
+                                levelText: "Make",
+                                hintText: "Make",
                                 isRequired: true,
                                 validatorText: "Required",
                                 controller: controller.brandController,
@@ -956,6 +938,16 @@ class EditProfileView extends GetView<EditProfileController> {
                               SizedBox(
                                 height: AppDimensions.contentPadding.h,
                               ),
+                              /*CustomTextField(
+                                levelText: "Make",
+                                hintText: "Make",
+                                isRequired: true,
+                                validatorText: "Required",
+                                controller: controller.makeController,
+                              ),
+                              SizedBox(
+                                height: AppDimensions.contentPadding.h,
+                              ),*/
                               CustomTextField(
                                 levelText: "Vehicle Registration Number",
                                 hintText: "Vehicle Registration Number",

@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:cgp_driver_app/app/modules/home/controllers/home_controller.dart';
 import 'package:cgp_driver_app/models/login_verification_model.dart';
 import 'package:cgp_driver_app/other_controllers/appbar_controller.dart';
 import 'package:cgp_driver_app/other_controllers/my_drawer_controller.dart';
 import 'package:cgp_driver_app/services/location_services.dart';
 import 'package:cgp_driver_app/services/notification_services.dart';
 import 'package:cgp_driver_app/services/socket_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -45,21 +47,19 @@ class VerifyOTPController extends GetxController {
   var isLogin = false;
   var isResetPassword = false;
   var deviceToken="".obs;
-
   String sessionId = "";
   @override
   void onInit() async{
     super.onInit();
     startTimer();
-    await NotificationServices().getDeviceToken().then((value){
-      deviceToken.value=value;
+
+       //await NotificationServices().getDeviceToken().then((value){
+    await FirebaseMessaging.instance.getToken().then((value){
+      deviceToken.value=value??"";
+      print("Device token: $value");
     });
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}
@@ -158,7 +158,15 @@ class VerifyOTPController extends GetxController {
           updateRiderLocation();
           loginModel = LoginVerificationModel.fromJson(response);
           await LocalServices.storeToken(loginModel.data?.accessToken ?? "");
-         await LocalServices().storeUser(loginModel.data?.rider??RiderModel());
+         // print("Request Id:${loginModel.data?.rider?.ongoingTrip?.deliveryRequestId}");
+          await LocalServices.storeOnGoingTrip((loginModel.data?.rider?.ongoingTrip?.deliveryRequestId).toString());
+
+         var riderJson= loginModel.data?.rider?.toJson();
+         riderJson?["is_active"]=false;
+
+        // await LocalServices().storeUser(loginModel.data?.rider??RiderModel());
+        // await LocalServices().storeUser(RiderModel.fromJson(riderJson!));
+         await LocalServices.storeUser(RiderModel.fromJson(riderJson!));
         } else {
           verifyOTPModel = VerifyOtpModel.fromJson(response);
         }
@@ -177,15 +185,16 @@ class VerifyOTPController extends GetxController {
   }
 
 
-  void handelNext() {
+  Future<void> handelNext() async {
     if (isLogin) {
       Get.put(AppbarController());
       Get.find<AppbarController>().getUserData();
       Get.put(MyDrawerController());
       Get.find<MyDrawerController>().getUserData();
-
+      Get.find<HomeController>().getOnGoingTrip();
+    // await Get.put(StatusSectionController()).changeOnlineStatus(status: false);
+      Get.find<HomeController>().getRiderData();
       Get.offAllNamed(Routes.HOME);
-
     }else if(isResetPassword){
       Get.put(PasswordController());
       Get.find<PasswordController>().isRegistration.value = isRegistration;
@@ -195,7 +204,6 @@ class VerifyOTPController extends GetxController {
           verifyOTPModel.data?.sessionId ?? "";
       Get.toNamed(Routes.PASSWORD);
     }
-
     else{
       Get.put(PasswordController());
       Get.find<PasswordController>().isRegistration.value = isRegistration;

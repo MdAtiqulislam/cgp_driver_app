@@ -4,6 +4,7 @@ import 'package:cgp_driver_app/models/rider_model.dart';
 import 'package:cgp_driver_app/other_controllers/appbar_controller.dart';
 import 'package:cgp_driver_app/other_controllers/my_drawer_controller.dart';
 import 'package:cgp_driver_app/services/notification_services.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -14,6 +15,8 @@ import '../../../../services/local_services.dart';
 import '../../../../services/location_services.dart';
 import '../../../../services/remote_services.dart';
 import '../../../../services/socket_service.dart';
+import '../../generalMap/general_map_controller.dart';
+import '../../home/controllers/home_controller.dart';
 
 class PasswordController extends GetxController {
   var isRegistration = false.obs;
@@ -33,15 +36,12 @@ class PasswordController extends GetxController {
   @override
   void onInit() async{
     super.onInit();
-    await NotificationServices().getDeviceToken().then((value){
-      deviceToken.value=value;
+    //await NotificationServices().getDeviceToken().then((value){
+    await FirebaseMessaging.instance.getToken().then((value){
+      deviceToken.value=value??"";
     });
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}
@@ -63,7 +63,8 @@ class PasswordController extends GetxController {
         isLoading.value = false;
         loginModel = LoginVerificationModel.fromJson(response);
         await LocalServices.storeToken(loginModel.data?.accessToken ?? "");
-       await LocalServices().storeUser(loginModel.data?.rider??RiderModel());
+        //await LocalServices.storeUser(loginModel.data?.rider??RiderModel());
+        await LocalServices.storeUser(loginModel.data?.rider??RiderModel());
 
         updateRiderLocation();
 
@@ -71,7 +72,12 @@ class PasswordController extends GetxController {
        Get.find<AppbarController>().getUserData();
        Get.put(MyDrawerController());
        Get.find<MyDrawerController>().getUserData();
-        Get.offAllNamed(Routes.HOME);
+       Get.put(GeneralMapController()).isApproved.value=false;
+
+       Get.offAllNamed(Routes.HOME);
+
+
+
         CustomSnackBar(
           msg: response["message"],
           isSuccess: true,

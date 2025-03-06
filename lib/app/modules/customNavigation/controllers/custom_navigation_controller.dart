@@ -1,306 +1,16 @@
-/*
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
-import 'package:location/location.dart';
 
-import '../../../routes/app_pages.dart';
-
-class CustomNavigationController extends GetxController {
-  late MapBoxNavigation _directions;
-  late MapBoxOptions options;
-  var isNavigating = false.obs;
-  var routeProgress = "".obs;
-  var currentLocation = LocationData.fromMap({"latitude": 0.0, "longitude": 0.0}).obs;
-  var isInitialized = false.obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-    _directions = MapBoxNavigation();
-    _initializeLocation();
-
-    // Subscribe to events
-    _directions.registerRouteEventListener(onRouteEvent);
-  }
-
-  void _initializeLocation() async {
-    Location location = Location();
-
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
-
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        print("Location services not enabled");
-        return;
-      }
-    }
-
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        print("Location permission denied");
-        return;
-      }
-    }
-
-    location.onLocationChanged.listen((LocationData currentLocationData) {
-      currentLocation.value = currentLocationData;
-      if (!isInitialized.value) {
-        isInitialized.value = true;
-        print("Current location updated: ${currentLocation.value.latitude}, ${currentLocation.value.longitude}");
-      }
-    });
-
-    LocationData locationData = await location.getLocation();
-    currentLocation.value = locationData;
-    isInitialized.value = true;
-    print("Initial location: ${currentLocation.value.latitude}, ${currentLocation.value.longitude}");
-  }
-
-
-
-  void startNavigation(double destinationLat, double destinationLng) async {
-    if (!isInitialized.value) {
-      print("Location not initialized yet. Retrying in 1 second...");
-      Future.delayed(Duration(seconds: 1), () {
-        startNavigation(destinationLat, destinationLng);
-      });
-      return;
-    }
-
-    var wayPoints = <WayPoint>[
-      WayPoint(name: "Start", latitude: currentLocation.value.latitude!, longitude: currentLocation.value.longitude!),
-      WayPoint(name: "End", latitude: destinationLat, longitude: destinationLng),
-    ];
-
-    print("wayPoints.first.longitude: ${wayPoints.first.longitude}");
-    print(wayPoints.last.longitude);
-
-    options = MapBoxOptions(
-      initialLatitude: currentLocation.value.latitude!,
-      initialLongitude: currentLocation.value.longitude!,
-      zoom: 14.0,
-      mode: MapBoxNavigationMode.drivingWithTraffic,
-      simulateRoute: false,
-      enableRefresh: true,
-      showEndOfRouteFeedback: false,
-      showReportFeedbackButton: false,
-      language: "en",
-    );
-
-    isNavigating.value = true;
-    _directions.enableOfflineRouting();
-    _directions.setDefaultOptions(options);
-    await _directions.startNavigation(wayPoints: wayPoints, options: options);
-    print("Navigation started");
-  }
-
-  void stopNavigation() async {
-    await _directions.finishNavigation();
-
-    isNavigating.value = false;
-    print("Navigation stopped");
-  }
-
-  Future<void> onRouteEvent(e) async {
-    routeProgress.value = e.eventType.toString();
-    switch (e.eventType) {
-      case MapBoxEvent.progress_change:
-        var progressEvent = e.data as RouteProgressEvent;
-        if (progressEvent.currentStepInstruction != null) {
-          routeProgress.value = progressEvent.currentStepInstruction!;
-        }
-        break;
-      case MapBoxEvent.route_building:
-      case MapBoxEvent.route_built:
-        isNavigating.value = true;
-        break;
-      case MapBoxEvent.route_build_failed:
-        isNavigating.value = false;
-        break;
-      case MapBoxEvent.navigation_finished:
-      case MapBoxEvent.navigation_cancelled:
-        isNavigating.value = false;
-        Get.offAndToNamed(Routes.ONGOING_TRIP);
-        break;
-      default:
-        break;
-    }
-    print("Route event: ${e.eventType}");
-  }
-}
-*/
-
-/*
-
+import 'package:cgp_driver_app/services/socket_service.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
-import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
-import 'package:location/location.dart';
-
-import '../../../routes/app_pages.dart';
-
-class CustomNavigationController extends GetxController {
-  late MapBoxNavigation _directions;
-  late MapBoxOptions options;
-  var isNavigating = false.obs;
-  var routeProgress = "".obs;
-  var currentLocation = LocationData.fromMap({"latitude": 0.0, "longitude": 0.0}).obs;
-  var isInitialized = false.obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-    _directions = MapBoxNavigation();
-    _initializeLocation();
-
-    // Subscribe to events
-    _directions.registerRouteEventListener(onRouteEvent);
-  }
-
-  void _initializeLocation() async {
-    Location location = Location();
-
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
-
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        print("Location services not enabled");
-        return;
-      }
-    }
-
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        print("Location permission denied");
-        return;
-      }
-    }
-
-    location.onLocationChanged.listen((LocationData currentLocationData) {
-      currentLocation.value = currentLocationData;
-      if (!isInitialized.value) {
-        isInitialized.value = true;
-        print("Current location updated: ${currentLocation.value.latitude}, ${currentLocation.value.longitude}");
-      }
-    });
-
-    LocationData locationData = await location.getLocation();
-    currentLocation.value = locationData;
-    isInitialized.value = true;
-    print("Initial location: ${currentLocation.value.latitude}, ${currentLocation.value.longitude}");
-  }
-
-  Future<void> startNavigation(double destinationLat, double destinationLng) async {
-    if (!isInitialized.value) {
-      print("Location not initialized yet. Retrying in 1 second...");
-      Future.delayed(const Duration(seconds: 0), () {
-        startNavigation(destinationLat, destinationLng);
-      });
-      return;
-    }
-
-    var wayPoints = <WayPoint>[
-      WayPoint(name: "Start", latitude: currentLocation.value.latitude!, longitude: currentLocation.value.longitude!),
-      WayPoint(name: "End", latitude: destinationLat, longitude: destinationLng),
-    ];
-
-    print("wayPoints.first.longitude: ${wayPoints.first.longitude}");
-    print(wayPoints.last.longitude);
-
-    options = MapBoxOptions(
-      initialLatitude: currentLocation.value.latitude!,
-      initialLongitude: currentLocation.value.longitude!,
-      zoom: 14.0,
-      mode: MapBoxNavigationMode.drivingWithTraffic,
-      simulateRoute: false,
-      enableRefresh: true,
-      showEndOfRouteFeedback: false,
-      showReportFeedbackButton: false,
-      language: "en",
-    );
-
-    isNavigating.value = true;
-    _directions.enableOfflineRouting();
-    _directions.setDefaultOptions(options);
-    await _directions.startNavigation(wayPoints: wayPoints, options: options);
-    print("Navigation started");
-  }
-
-  void stopNavigation() async {
-    await _directions.finishNavigation();
-
-    isNavigating.value = false;
-    print("Navigation stopped");
-  }
-
-  Future<void> onRouteEvent(e) async {
-    routeProgress.value = e.eventType.toString();
-    print("routeProgress: $routeProgress");
-    switch (e.eventType) {
-
-      case MapBoxEvent.progress_change:
-        var progressEvent = e.data as RouteProgressEvent;
-      //  _arrived = progressEvent.arrived;
-
-        if((progressEvent.currentLegDistanceRemaining??50)<=20){
-          _directions.finishNavigation();
-          stopNavigation();
-          Get.offAndToNamed(Routes.ONGOING_TRIP);
-        }
-     print("progressEvent.arrived:${progressEvent.arrived}");
-
-        if (progressEvent.currentStepInstruction != null) {
-          //  _instruction = progressEvent.currentStepInstruction;
-        print("progressEvent.currentStepInstruction:${progressEvent.currentLegDistanceRemaining}");
-        }
-        break;
-      case MapBoxEvent.route_building:
-      case MapBoxEvent.route_built:
-        isNavigating.value = true;
-        break;
-      case MapBoxEvent.route_build_failed:
-        isNavigating.value = false;
-        break;
-      case MapBoxEvent.navigation_finished:
-        print(">>>>>>>>>>>>>>>>>>>");
-        break;
-      case MapBoxEvent.navigation_cancelled:
-        isNavigating.value = false;
-        Get.offAndToNamed(Routes.ONGOING_TRIP);
-        break;
-      default:
-        break;
-    }
-    print("Route event: ${e.eventType}");
-  }
-}
-
-
- */
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-
-import '../../../../utils/utils.dart';
 import '../../../routes/app_pages.dart';
 
 class CustomNavigationController extends GetxController {
   late MapBoxNavigation _directions;
+  late MapBoxNavigationViewController _controller;
   late MapBoxOptions options;
   var isNavigating = false.obs;
   var routeProgress = "".obs;
@@ -308,7 +18,8 @@ class CustomNavigationController extends GetxController {
       LocationData.fromMap({"latitude": 0.0, "longitude": 0.0}).obs;
   var isInitialized = false.obs;
 
-  var destination = LatLng(0.0, 0.0).obs;
+  var origin = const LatLng(0.0, 0.0).obs;
+  var destination = const LatLng(0.0, 0.0).obs;
 
   @override
   void onInit() {
@@ -329,6 +40,33 @@ class CustomNavigationController extends GetxController {
 
     // Subscribe to events
     _directions.registerRouteEventListener(onRouteEvent);
+  }
+
+  void onMapCreated(MapBoxNavigationViewController controller) {
+      _controller = controller;
+    _initializeMap();
+  }
+
+  void _initializeMap() async {
+    try {
+      await _controller.initialize();
+      await _controller.buildRoute(
+        wayPoints: [
+          WayPoint(name: "origin", latitude: currentLocation.value.latitude, longitude: currentLocation.value.longitude),
+          WayPoint(name: "destination", latitude: destination.value.latitude, longitude: destination.value.longitude)
+        ],
+        options: MapBoxOptions(
+          allowsUTurnAtWayPoints: true,
+          mode: MapBoxNavigationMode.drivingWithTraffic,
+          voiceInstructionsEnabled: true,
+          bannerInstructionsEnabled: false,
+        ),
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error initializing MapBox: $e');
+      }
+    }
   }
 
   void _initializeLocation() async {
@@ -370,6 +108,7 @@ class CustomNavigationController extends GetxController {
     destination.value = LatLng(destinationLat, destinationLng);
 
     if (!isInitialized.value) {
+      print("Checking");
       Future.delayed(const Duration(seconds: 1), () {
         startNavigation(destinationLat, destinationLng);
       });
@@ -415,7 +154,6 @@ class CustomNavigationController extends GetxController {
 
   void stopNavigation() async {
     await _directions.finishNavigation();
-
     isNavigating.value = false;
   }
 
@@ -425,20 +163,23 @@ class CustomNavigationController extends GetxController {
       case MapBoxEvent.progress_change:
         var progressEvent = e.data as RouteProgressEvent;
 
-        var distanceInMeter = await calculateDistanceInMeter(destination.value);
+        var distance=await _directions.getDistanceRemaining();
+        var duration=await _directions.getDurationRemaining();
 
-        print("distanceInMeter: ${await _directions.getDistanceRemaining()}");
+        Get.find<SocketService>().sendDistanceAndDuration(duration: duration.toString(), distance: distance.toString());
 
+      /*  var distanceInMeter = await calculateDistanceInMeter(destination.value);
         if (distanceInMeter <= 100 ||
-            (await _directions.getDistanceRemaining() ?? 110) <= 100) {
+            (await _directions.getDistanceRemaining() ?? 310) <= 300) {
           _finishNavigation();
-        }
+        }*/
 
         if (progressEvent.currentStepInstruction != null) {}
         break;
       case MapBoxEvent.route_building:
       case MapBoxEvent.route_built:
         isNavigating.value = true;
+        //_directions.startNavigation(wayPoints: way);
         break;
       case MapBoxEvent.route_build_failed:
         isNavigating.value = false;
@@ -461,15 +202,23 @@ class CustomNavigationController extends GetxController {
     try {
       isNavigating.value = false;
       _directions.finishNavigation();
-      print("Attempting to finish navigation");
+      if (kDebugMode) {
+        print("Attempting to finish navigation");
+      }
       _directions.finishNavigation();
-      print("Navigation finished");
+      if (kDebugMode) {
+        print("Navigation finished");
+      }
       isNavigating.value = false;
       MapBoxNavigation.instance.finishNavigation();
-      print("isNavigating set to false");
+      if (kDebugMode) {
+        print("isNavigating set to false");
+      }
       Get.offAndToNamed(Routes.ONGOING_TRIP);
     } catch (error) {
-      print("Error finishing navigation: $error");
+      if (kDebugMode) {
+        print("Error finishing navigation: $error");
+      }
     }
   }
 }

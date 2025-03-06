@@ -56,7 +56,9 @@ class TripRequestView extends GetView<TripRequestController> {
                      onAccepted: (){
                         controller.onTripAccepted();
                      },
-                     onDecline: (){},
+                     onDecline: (){
+                        controller.onTripDeclined();
+                     },
                     )
                        : WareHouseInfoCard(
                      changeExpandMode: (value) {

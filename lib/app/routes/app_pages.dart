@@ -12,6 +12,8 @@ import 'package:cgp_driver_app/app/modules/drivingLicenseInfo/bindings/driving_l
 import 'package:cgp_driver_app/app/modules/drivingLicenseInfo/views/driving_license_info_view.dart';
 import 'package:cgp_driver_app/app/modules/editProfile/bindings/edit_profile_binding.dart';
 import 'package:cgp_driver_app/app/modules/editProfile/views/edit_profile_view.dart';
+import 'package:cgp_driver_app/app/modules/faqPage/bindings/faq_page_binding.dart';
+import 'package:cgp_driver_app/app/modules/faqPage/views/faq_page_view.dart';
 import 'package:cgp_driver_app/app/modules/forgotPassword/bindings/forgot_password_binding.dart';
 import 'package:cgp_driver_app/app/modules/forgotPassword/views/forgot_password_view.dart';
 import 'package:cgp_driver_app/app/modules/home/bindings/home_binding.dart';
@@ -65,7 +67,7 @@ class AppPages {
   AppPages._();
 
   static const INITIAL = Routes.SPLASH_SCREEN;
- // static const INITIAL = Routes.CUSTOM_NAVIGATION;
+  // static const INITIAL = Routes.CUSTOM_NAVIGATION;
   // static const INITIAL = Routes.HOME;
 //  static const INITIAL = Routes.TRIP_REQUEST;
 
@@ -214,6 +216,11 @@ class AppPages {
       name: _Paths.CHAT_HISTORY,
       page: () => ChatHistoryView(),
       binding: ChatHistoryBinding(),
+    ),
+    GetPage(
+      name: _Paths.FAQ_PAGE,
+      page: () => FaqPageView(),
+      binding: FaqPageBinding(),
     ),
   ];
 }

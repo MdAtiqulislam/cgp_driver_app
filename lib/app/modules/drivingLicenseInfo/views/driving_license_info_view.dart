@@ -15,6 +15,8 @@ import 'package:get/get.dart';
 import '../controllers/driving_license_info_controller.dart';
 
 class DrivingLicenseInfoView extends GetView<DrivingLicenseInfoController> {
+  const DrivingLicenseInfoView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
@@ -33,7 +35,7 @@ class DrivingLicenseInfoView extends GetView<DrivingLicenseInfoController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          HeaderText(
+          const HeaderText(
             text: "Congratulations!",
             size: 20,
             color: AppColors.primaryColor,
@@ -42,7 +44,7 @@ class DrivingLicenseInfoView extends GetView<DrivingLicenseInfoController> {
           SizedBox(
             height: AppDimensions.widgetPadding.h,
           ),
-          BodyText(
+          const BodyText(
             text: "Your vehicle is registered & enlisted to our database",
             size: 16,
             align: TextAlign.start,
@@ -61,7 +63,7 @@ class DrivingLicenseInfoView extends GetView<DrivingLicenseInfoController> {
           SizedBox(
             height: AppDimensions.sectionPadding.h,
           ),
-          CustomTextField(
+          const CustomTextField(
             levelText: "Driving License Number",
             hintText: "Driving License Number",
             isRequired: true,
@@ -79,7 +81,7 @@ class DrivingLicenseInfoView extends GetView<DrivingLicenseInfoController> {
             ),
             child: Center(
               child: IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.camera_alt,
                   size: 45,
                   color: AppColors.placeholderColor,
@@ -91,7 +93,7 @@ class DrivingLicenseInfoView extends GetView<DrivingLicenseInfoController> {
           SizedBox(
             height: AppDimensions.sectionPadding.h,
           ),
-          BodyText(
+          const BodyText(
             text:
                 "Please take a photo of your driving license. Please make sure the light & sharpness is good",
             maxLine: 5,

@@ -4,9 +4,11 @@ import 'package:cgp_driver_app/constraints/app_strings.dart';
 import 'package:cgp_driver_app/models/load_message_model.dart';
 import 'package:cgp_driver_app/models/message_data_model.dart';
 import 'package:cgp_driver_app/models/rider_model.dart';
+import 'package:cgp_driver_app/services/api_endpoints.dart';
 import 'package:cgp_driver_app/services/local_services.dart';
 import 'package:cgp_driver_app/services/pusher_services.dart';
 import 'package:cgp_driver_app/services/remote_services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -44,13 +46,16 @@ class MessagingController extends GetxController {
       // var fetchedMessages = await messageService.fetchMessagesBySenderId(senderId);
       //  messages.assignAll(fetchedMessages);
     } catch (e) {
-      print('Failed to load messages: $e');
+      if (kDebugMode) {
+        print('Failed to load messages: $e');
+      }
     }
   }
 
   Future<void> sendMessage() async {
     final text = messageController.text;
-    var url="https://cgp.studypress.org/api/v1/messaging/ajax/send-message";
+   // var url="https://cgp.studypress.org/api/v1/messaging/ajax/send-message";
+    var url="${APIEndPoints.baseUrlMessaging}/api/v1/messaging/ajax/send-message";
     if (text.isNotEmpty) {
       var body = {
         "sender_id": senderId??rider.value.userId,
@@ -70,8 +75,6 @@ class MessagingController extends GetxController {
           sendMessageResponseModel =
               SendMessageResponseModel.fromJson(response);
           messages.add(sendMessageResponseModel.data ?? MessageDataModel());
-
-
         } else {
           CustomSnackBar(isSuccess: false, msg: AppStrings.httpErrorMSG.value)
               .showSnackBar();
@@ -85,12 +88,15 @@ class MessagingController extends GetxController {
   Future<void> loadPreviousMessage() async {
     await getRider();
 
-print("Sender id:$senderId, Rider id: ${rider.value.userId.toString()}");
+if (kDebugMode) {
+  print("Sender id:$senderId, Rider id: ${rider.value.userId.toString()}");
+}
 
 
     messages.value=[];
     isLoading.value=true;
-    var link="https://cgp.studypress.org/api/v1/messaging/ajax/get-message-list";
+    //var link="https://cgp.studypress.org/api/v1/messaging/ajax/get-message-list";
+    var link="${APIEndPoints.baseUrlMessaging}/api/v1/messaging/ajax/get-message-list";
     var parameters={
     "senderId": senderId??rider.value.userId.toString(),
     "receiverId": receiverId??orderDetails.value.data?.requestFrom?.userId.toString(),

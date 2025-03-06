@@ -5,7 +5,7 @@ class MessageBubble extends StatelessWidget {
   final bool isSender;
   final DateTime timestamp;
 
-  MessageBubble({
+  const MessageBubble({super.key,
     required this.message,
     required this.isSender,
     required this.timestamp,
@@ -16,17 +16,17 @@ class MessageBubble extends StatelessWidget {
     return Align(
       alignment: isSender ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         decoration: BoxDecoration(
           color: isSender ? Colors.blue[100] : Colors.grey[200],
           borderRadius: isSender
-              ? BorderRadius.only(
+              ? const BorderRadius.only(
             topLeft: Radius.circular(15),
             topRight: Radius.circular(15),
             bottomLeft: Radius.circular(15),
           )
-              : BorderRadius.only(
+              : const BorderRadius.only(
             topLeft: Radius.circular(15),
             topRight: Radius.circular(15),
             bottomRight: Radius.circular(15),
@@ -37,12 +37,12 @@ class MessageBubble extends StatelessWidget {
           children: [
             Text(
               message,
-              style: TextStyle(fontSize: 16, color: Colors.black),
+              style: const TextStyle(fontSize: 16, color: Colors.black),
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             Text(
               timestamp.toLocal().toString(),
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ],
         ),

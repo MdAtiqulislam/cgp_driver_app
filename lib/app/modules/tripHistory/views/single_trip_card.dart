@@ -57,7 +57,7 @@ class SingleTripCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  HeaderText(
+                  const HeaderText(
                     text: "Earned:",
                     size: 12,
                   ),

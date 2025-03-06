@@ -1,9 +1,10 @@
+import 'package:cgp_driver_app/app/modules/completeTrip/controllers/complete_trip_controller.dart';
+import 'package:cgp_driver_app/app/modules/generalMap/general_map_controller.dart';
 import 'package:cgp_driver_app/app/modules/ongoingTrip/controllers/ongoing_trip_controller.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../../common_widgets/animated_timer.dart';
 import '../../../../common_widgets/app_button.dart';
 import '../../../../common_widgets/custom_circle_avatar.dart';
@@ -13,11 +14,15 @@ import '../../../../constraints/app_strings.dart';
 import '../../../../constraints/body_text.dart';
 import '../../../../constraints/dimensions.dart';
 import '../../../../constraints/header_text.dart';
+import '../../../../utils/delivery_proof_image_upload.dart';
+import '../../../../utils/utils.dart';
 import '../../../routes/app_pages.dart';
 import '../../messaging/controllers/messaging_controller.dart';
 
 class TripInfoCard extends GetView<OngoingTripController> {
-  const TripInfoCard({super.key});
+   TripInfoCard({super.key});
+
+  var mapController=Get.put(GeneralMapController());
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +61,7 @@ class TripInfoCard extends GetView<OngoingTripController> {
                         SizedBox(
                           height: AppDimensions.contentPadding.h,
                         ),
-                        Divider(),
+                        const Divider(),
                         // notificationSection(),
                         tripStatusSection(),
                         locationSection(),
@@ -99,40 +104,38 @@ class TripInfoCard extends GetView<OngoingTripController> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            Container(
-              child: Row(
-                children: [
-                  IconButton(onPressed: (){
-                    Get.bottomSheet(
-                      isScrollControlled: true,
-                      ignoreSafeArea: false,
-                      callWidget(),
-                    );
+            Row(
+              children: [
+                IconButton(onPressed: (){
+                  Get.bottomSheet(
+                    isScrollControlled: true,
+                    ignoreSafeArea: false,
+                    callWidget(),
+                  );
 
-                  }, icon: const Icon(
-                    Icons.phone,
-                    color: AppColors.primaryColor,
-                  )),
-                  SizedBox(
-                    width: AppDimensions.contentPadding.w,
-                  ),
-                  IconButton(onPressed: () {
-                    Get.put(MessagingController());
-                    Get.find<MessagingController>().initValue();
-                    Get.find<MessagingController>().imageLink.value =
-                        controller.tripRequestDetails.value.data
-                            ?.requestFrom?.url ??
-                            "";
-                    Get.find<MessagingController>().chatWith.value=controller.tripRequestDetails.value.data
-                        ?.requestFrom?.name ??
-                        "";
-                    Get.find<MessagingController>().orderDetails.value=controller.tripRequestDetails.value;
-                    Get.find<MessagingController>().loadPreviousMessage();
-                    Get.toNamed(Routes.MESSAGING);
-                  }, icon: const Icon(Icons.chat,
-                       color: AppColors.primaryColor)),
-                ],
-              ),
+                }, icon: const Icon(
+                  Icons.phone,
+                  color: AppColors.primaryColor,
+                )),
+                SizedBox(
+                  width: AppDimensions.contentPadding.w,
+                ),
+                IconButton(onPressed: () {
+                  Get.put(MessagingController());
+                  Get.find<MessagingController>().initValue();
+                  Get.find<MessagingController>().imageLink.value =
+                      controller.tripRequestDetails.value.data
+                          ?.requestFrom?.url ??
+                          "";
+                  Get.find<MessagingController>().chatWith.value=controller.tripRequestDetails.value.data
+                      ?.requestFrom?.name ??
+                      "";
+                  Get.find<MessagingController>().orderDetails.value=controller.tripRequestDetails.value;
+                  Get.find<MessagingController>().loadPreviousMessage();
+                  Get.toNamed(Routes.MESSAGING);
+                }, icon: const Icon(Icons.chat,
+                     color: AppColors.primaryColor)),
+              ],
             )
           ],
         ),
@@ -147,14 +150,16 @@ class TripInfoCard extends GetView<OngoingTripController> {
         Expanded(
           child: Obx(
             () => IgnorePointer(
-              ignoring: false, //!controller.isButtonEnabled.value,
+              ignoring: controller.showNavigationButton.value && controller.distanceInMeters.value>150,
               child: AppButton(
                 text: controller.actionButtonText.value,
                 onTap: () {
                   controller.changeOrderStatus();
-                  // onTap();
+                 // Get.toNamed(Routes.COMPLETE_TRIP);
+                  //showDeliveryProofDialog(Get.context!,"786");
+
                 },
-                bgColor: AppColors.primaryColor,
+                bgColor: controller.showNavigationButton.value && controller.distanceInMeters.value>150?AppColors.inactiveColor:AppColors.primaryColor,
                 borderRadius: 10,
                 horizontalPadding: AppDimensions.horizontalPadding * 2.w,
               ),
@@ -198,7 +203,7 @@ class TripInfoCard extends GetView<OngoingTripController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              HeaderText(
+              const HeaderText(
                 text: "Pickup Location",
                 size: 12,
                 color: AppColors.primaryColor,
@@ -216,7 +221,7 @@ class TripInfoCard extends GetView<OngoingTripController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              HeaderText(
+              const HeaderText(
                 text: "Destination Location",
                 size: 12,
                 color: AppColors.primaryColor,

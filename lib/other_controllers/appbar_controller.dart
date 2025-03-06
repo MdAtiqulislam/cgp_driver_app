@@ -57,14 +57,12 @@ class AppbarController extends GetxController{
  }
 
   void calculateUnreadNotification() {
-    print("Calculating.......");
     unreadNotifications.value=0;
     notificationsModel.value.data?.forEach((value){
       if(!(value.isRead??true)){
         unreadNotifications.value+=1;
       }
     });
-    print(unreadNotifications);
   }
 
   void openNotificationPage() {

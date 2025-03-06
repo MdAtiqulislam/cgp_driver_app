@@ -14,6 +14,8 @@ import '../../../../constraints/header_text.dart';
 import '../controllers/verify_o_t_p_controller.dart';
 
 class VerifyOTPView extends GetView<VerifyOTPController> {
+  const VerifyOTPView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Obx(
@@ -200,7 +202,7 @@ class VerifyOTPView extends GetView<VerifyOTPController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  BodyText(text: "You can request a new code after the time"),
+                  const BodyText(text: "You can request a new code after the time"),
 
                   if (controller.resendOtpTime.value > 0)
                     BodyText(
@@ -250,7 +252,7 @@ class VerifyOTPView extends GetView<VerifyOTPController> {
             SizedBox(
               width: AppDimensions.widgetPadding.w,
             ),
-            HeaderText(
+            const HeaderText(
               text: "Back",
               color: AppColors.primaryColor,
             )

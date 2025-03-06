@@ -14,6 +14,8 @@ import 'package:get/get.dart';
 import '../controllers/driver_info_controller.dart';
 
 class DriverInfoView extends GetView<DriverInfoController> {
+  const DriverInfoView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
@@ -26,7 +28,7 @@ class DriverInfoView extends GetView<DriverInfoController> {
           children: [
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.check_circle,
                   size: 40,
                   color: AppColors.primaryColor,
@@ -34,7 +36,7 @@ class DriverInfoView extends GetView<DriverInfoController> {
                 SizedBox(
                   width: AppDimensions.widgetPadding.w,
                 ),
-                Expanded(
+                const Expanded(
                   child: HeaderText(
                     text: "Driving License Varified",
                     size: 20,
@@ -46,7 +48,7 @@ class DriverInfoView extends GetView<DriverInfoController> {
             SizedBox(
               height: AppDimensions.sectionPadding.h,
             ),
-            BodyText(
+            const BodyText(
               text: "Final Steps to move forward",
               size: 16,
             ),
@@ -65,7 +67,7 @@ class DriverInfoView extends GetView<DriverInfoController> {
                   ),
                   child: Center(
                     child: IconButton(
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.camera_alt,
                         size: 45,
                         color: AppColors.placeholderColor,
@@ -75,7 +77,7 @@ class DriverInfoView extends GetView<DriverInfoController> {
                   ),
                 ),
                 SizedBox(width: AppDimensions.widgetPadding.w,),
-                Expanded(child: HeaderText(text: "Upload your photo",color: AppColors.primaryColor,),)
+                const Expanded(child: HeaderText(text: "Upload your photo",color: AppColors.primaryColor,),)
               ],
             ),
             SizedBox(height: AppDimensions.sectionPadding.h,),

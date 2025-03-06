@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-
 import '../../../../common_widgets/custom_snackbar.dart';
 import '../../../../constraints/app_strings.dart';
 import '../../../../services/api_endpoints.dart';
@@ -18,15 +17,7 @@ class LoginController extends GetxController {
   var otpModel=OtpModel();
   var isLoading=false.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}

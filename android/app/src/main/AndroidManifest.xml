@@ -69,28 +69,6 @@
             </intent-filter>
         </receiver>
 
-        <!-- Navigation Receiver -->
-       <!-- <receiver
-            android:name="com.eopeter.fluttermapboxnavigation.receiver.NavigationReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.mapbox.android.telemetry.action.telemetry"/>
-                <action android:name="com.mapbox.navigation.action.NAVIGATION_EVENT"/>
-            </intent-filter>
-        </receiver>-->
-
-        <!-- Callkit Receivers -->
-
-      <!--  <receiver android:name="com.example.flutter_callkit_incoming.CallkitReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.example.flutter_callkit_incoming.ACTION_CALL_INCOMING"/>
-            </intent-filter>
-        </receiver>
-
-        <service android:name="com.example.flutter_callkit_incoming.CallkitService" android:exported="true"/>
--->
     </application>
 
     <!-- Required to query activities that can process text -->

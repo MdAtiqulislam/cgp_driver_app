@@ -1,6 +1,8 @@
 
 import 'package:cgp_driver_app/other_controllers/avg_ratings_model.dart';
 
+import 'on_going_trip_short_model.dart';
+
 class RiderModel {
   final int? id;
   final int? userId;
@@ -27,6 +29,8 @@ class RiderModel {
   final DateTime? updatedAt;
   final dynamic profileImageUrl;
   final AvgRating? avgRating;
+  final OngoingTripShortModel? ongoingTrip;
+  final String? activeDeviceToken;
 
   RiderModel({
     this.id,
@@ -54,6 +58,8 @@ class RiderModel {
     this.updatedAt,
     this.profileImageUrl,
     this.avgRating,
+    this.ongoingTrip,
+    this.activeDeviceToken,
   });
 
   factory RiderModel.fromJson(Map<String, dynamic> json) => RiderModel(
@@ -76,12 +82,14 @@ class RiderModel {
     isDrivingLicenseVerified: json["is_driving_license_verified"],
     isActive: json["is_active"],
     isApproved: json["is_approved"],
+    activeDeviceToken: json["active_device_token"],
     registrationDate: json["registration_date"] == null ? null : DateTime.parse(json["registration_date"]),
     lastLogin: json["last_login"] == null ? null : DateTime.parse(json["last_login"]),
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
     profileImageUrl: json["profile_image_url"],
     avgRating: json["avg_rating"] == null ? null : AvgRating.fromJson(json["avg_rating"]),
+    ongoingTrip: json["ongoing_trip"] == null ? null : OngoingTripShortModel.fromJson(json["ongoing_trip"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -93,6 +101,7 @@ class RiderModel {
     "email": email,
     "date_of_birth": dateOfBirth,
     "gender": gender,
+    "active_device_token": activeDeviceToken,
     "profile_image_cf_media_id": profileImageCfMediaId,
     "driving_license_number": drivingLicenseNumber,
     "driving_license_authorized_office_id": drivingLicenseAuthorizedOfficeId,
@@ -110,5 +119,6 @@ class RiderModel {
     "updated_at": updatedAt?.toIso8601String(),
     "profile_image_url": profileImageUrl,
     "avg_rating": avgRating?.toJson(),
+    "ongoing_trip": ongoingTrip?.toJson(),
   };
 }

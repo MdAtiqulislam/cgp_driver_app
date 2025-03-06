@@ -22,15 +22,7 @@ class RegistrationController extends GetxController {
   var emailController=TextEditingController();
   var phoneController=TextEditingController();
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}

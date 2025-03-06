@@ -1,0 +1,2 @@
+/Users/revinar/AndroidStudioProjects/cgp_driver_app/android/app/.cxx/RelWithDebInfo/b45e5664/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/Users/revinar/AndroidStudioProjects/cgp_driver_app/android/app/.cxx/RelWithDebInfo/b45e5664/armeabi-v7a/CMakeFiles/edit_cache.dir

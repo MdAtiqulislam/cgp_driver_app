@@ -1,0 +1,2 @@
+/Users/revinar/AndroidStudioProjects/cgp_driver_app/android/app/.cxx/Debug/1i1j3d38/x86/CMakeFiles/rebuild_cache.dir
+/Users/revinar/AndroidStudioProjects/cgp_driver_app/android/app/.cxx/Debug/1i1j3d38/x86/CMakeFiles/edit_cache.dir

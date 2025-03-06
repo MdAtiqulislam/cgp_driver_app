@@ -60,7 +60,7 @@ class TripClientInfoCard extends StatelessWidget {
                     SizedBox(
                       height: AppDimensions.contentPadding.h,
                     ),
-                    Divider(),
+                    const Divider(),
                     tripInfoSection(),
                     SizedBox(height: AppDimensions.widgetPadding.h,),
                     buttonSection()
@@ -142,7 +142,7 @@ class TripClientInfoCard extends StatelessWidget {
   }
 
   Widget clientStatusSection() {
-    return Column(
+    return const Column(
       children: [
         Row(
           children: [
@@ -161,7 +161,7 @@ class TripClientInfoCard extends StatelessWidget {
   }
 
   Widget tripInfoSection() {
-    return Row(
+    return const Row(
       children: [
         Expanded(
           child: Column(

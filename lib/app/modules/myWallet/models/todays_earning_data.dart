@@ -33,10 +33,10 @@ class TodaysEarningHistoryModel {
 }
 
 class TodaysEarningData {
-  final int? totalTrips;
-  final int? totalDistance;
-  final int? totalEarnings;
-  final int? totalTripTime;
+  final dynamic totalTrips;
+  final dynamic totalDistance;
+  final dynamic totalEarnings;
+  final dynamic totalTripTime;
 
   TodaysEarningData({
     this.totalTrips,

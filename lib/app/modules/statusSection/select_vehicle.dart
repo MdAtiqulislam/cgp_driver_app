@@ -5,11 +5,11 @@ import 'package:cgp_driver_app/common_widgets/app_button.dart';
 import 'package:cgp_driver_app/common_widgets/custom_circle_avatar.dart';
 import 'package:cgp_driver_app/constraints/body_text.dart';
 import 'package:cgp_driver_app/models/single_vehicle_model.dart';
+import 'package:cgp_driver_app/services/local_services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
-import '../../../common_widgets/custom_loading_screen.dart';
 import '../../../constraints/app_colors.dart';
 import '../../../constraints/app_strings.dart';
 import '../../../constraints/dimensions.dart';
@@ -42,11 +42,11 @@ class SelectVehicle extends StatelessWidget {
                     text: "Select Vehicle",
                     color: Colors.white,
                   ),
-                  InkWell(
-                      onTap: () {
+                  IconButton(
+                      onPressed: () {
                         Get.back();
                       },
-                      child: Image.asset(AppImagePath.cancelIcon))
+                      icon: Icon(Icons.cancel_presentation_outlined,color: Colors.white,size: 25.sp,))
                 ],
               ),
             ),
@@ -68,7 +68,7 @@ class SelectVehicle extends StatelessWidget {
                                       0,
                               itemBuilder: (buildContext, index) {
                                 return Obx(() => InkWell(
-                                      onTap: () {
+                                      onTap: () async {
                                         controller.selectedVehicleTypeId.value =
                                             (controller
                                                         .riderVehicles
@@ -82,6 +82,8 @@ class SelectVehicle extends StatelessWidget {
                                             controller.riderVehicles.value
                                                     .data?[index] ??
                                                 SingleVehicleModel();
+                                       // await LocalServices().storeSelectedVehicle(controller.selectedRiderVehicle.value);
+                                        await LocalServices.storeSelectedVehicle(controller.selectedRiderVehicle.value);
                                       },
                                       child: Card(
                                         child: Padding(

@@ -80,7 +80,7 @@ extension OrderStatusExtension on OrderStatus {
       case OrderStatus.expired:
         return "expired";
       case OrderStatus.cancelled:
-        return "cancelled";
+        return "cancled";
       case OrderStatus.pending:
         return "pending";
       case OrderStatus.waitingAtPickupPoint:

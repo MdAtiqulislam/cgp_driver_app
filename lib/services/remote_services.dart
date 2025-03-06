@@ -292,7 +292,9 @@ class RemoteServices {
         encoding: Encoding.getByName("utf-8"),
       );
 
-      print(response.body);
+      if (kDebugMode) {
+        print(response.body);
+      }
 
       return handleResponse(response);
     } on Exception catch (e) {
@@ -328,6 +330,8 @@ class RemoteServices {
       }
 
       final http.Response response = await client.get(uri, headers: headers);
+
+      print(response.body);
 
       return handleResponse(response);
     } on Exception catch (e) {
@@ -378,6 +382,47 @@ class RemoteServices {
     }
   }
 
+  static Future<dynamic> getRequestForResponseBody({
+    required String endPoint,
+    Map<String, dynamic>? body,
+    Map<String, dynamic>? parameters,
+  }) async {
+    token = await LocalServices.getToken() ?? "";
+
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $token",
+    };
+
+
+    try {
+      final Uri uri = Uri.parse(baseURL + endPoint).replace(
+        queryParameters: parameters,
+      );
+      if (kDebugMode) {
+        print("GET Request URL: $uri");
+        print("Token: $token");
+      }
+
+      final http.Response response = await client.get(uri, headers: headers);
+      if(isHttpStatusSuccess(response.statusCode)) {
+        return json.decode(response.body);
+      } else {
+        return null;
+      }
+
+
+      return response.body;
+    } on Exception catch (e) {
+      AppStrings.httpErrorMSG.value = AppStrings.generalHttpErrorMSG;
+      if (kDebugMode) {
+        print("Error in GET request: $e");
+      }
+      return null;
+    }
+  }
+
+
+
   static Future<dynamic> getRequest({
     required String endPoint,
     Map<String, dynamic>? body,
@@ -399,6 +444,7 @@ class RemoteServices {
       }
 
       final http.Response response = await client.get(uri, headers: headers);
+
 
       return handleResponse(response);
     } on Exception catch (e) {
@@ -472,8 +518,6 @@ class RemoteServices {
             filename: image.path.split('/').last);
         request.files.add(multipartFile);
       }
-      request.headers["access-key"] =
-          key ?? "0a93e525aa73df8b5ef676fe7d1d49c5aisdu98sa7d";
 
       final http.Response response =
           await http.Response.fromStream(await request.send());
@@ -487,6 +531,109 @@ class RemoteServices {
       return null;
     }
   }
+
+
+  static Future<dynamic> uploadDeliveryProofImages({
+    required List<File> images,
+    required endPoint,
+    required String id,
+  }) async {
+    final Uri uri = Uri.parse(APIEndPoints.baseUrlMessaging + endPoint);
+
+    try {
+      final http.MultipartRequest request = http.MultipartRequest('POST', uri);
+
+     // request.fields.addAll(body ?? {});
+      request.fields['id'] = id;
+
+      print(images);
+      print(">>>>>>>>>>${request.fields}");
+
+      for (final image in images) {
+        final http.ByteStream stream = http.ByteStream(image.openRead());
+        final int length = await image.length();
+        final http.MultipartFile multipartFile = http.MultipartFile(
+            'attachments[]', stream, length,
+            filename: image.path.split('/').last);
+        request.files.add(multipartFile);
+      }
+
+      final http.Response response =
+          await http.Response.fromStream(await request.send());
+
+      return handleResponse(response);
+    } on Exception catch (e) {
+      AppStrings.httpErrorMSG.value = AppStrings.generalHttpErrorMSG;
+      if (kDebugMode) {
+        print("Error in uploading images: $e");
+      }
+      return null;
+    }
+  }
+
+
+
+/*  static Future<dynamic> uploadDeliveryProofImages({
+    required List<Map<String, dynamic>> selectedDocument, // List of file details
+    required String url,
+    required String deliveryId, // Lead ID to be sent
+  }) async {
+    final Uri uri = Uri.parse(url);
+    final Map<String, String> headers = {
+      "Authorization": "Bearer $token",
+    };
+
+    if (kDebugMode) {
+      print(uri);
+      print(selectedDocument);
+      print(deliveryId);
+    }
+
+    try {
+      final http.MultipartRequest request = http.MultipartRequest("POST", uri);
+
+      request.headers.addAll(headers);
+
+      request.fields['id'] = deliveryId;
+
+      for (int i = 0; i < selectedDocument.length; i++) {
+        final doc = selectedDocument[i];
+        final filePath = doc['path'];
+        final fileName = doc['name'];
+
+        if (filePath != null && filePath.isNotEmpty) {
+          // Add file name to the body with indexed key
+          request.fields['file_name[$i]'] = fileName ?? 'unknown';
+
+          // Attach the file to the request with indexed key
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'attachments[$i]', // Indexed field name for file
+              filePath, // Path of the file
+              filename: fileName, // Explicitly set the file name
+            ),
+          );
+        }
+      }
+
+      if (kDebugMode) {
+        print(request.fields); // To debug the final fields being sent
+      }
+
+      final response = await http.Response.fromStream(await request.send());
+
+
+      var r = json.decode(response.body);
+      return handleResponse(response);
+    } on Exception catch (e) {
+      AppStrings.httpErrorMSG.value = AppStrings.generalHttpErrorMSG;
+      if (kDebugMode) {
+        print("Error in uploading images: $e");
+      }
+      return null;
+    }
+  }*/
+
 
 
 
@@ -572,7 +719,8 @@ class RemoteServices {
     required String endPoint,
     required String requestType,
     Map<String, String>? body,
-  }) async {
+  }) async
+  {
     final Uri uri = Uri.parse(baseURL + endPoint);
     final Map<String, String> headers = {
       "Authorization": "Bearer $token",
@@ -606,6 +754,8 @@ class RemoteServices {
       }
 
       final response = await http.Response.fromStream(await request.send());
+
+      print("Response: ${response.body}");
       return handleResponse(response);
     } on Exception catch (e) {
       AppStrings.httpErrorMSG.value = AppStrings.generalHttpErrorMSG;
@@ -615,4 +765,6 @@ class RemoteServices {
       return null;
     }
   }
+
+
 }

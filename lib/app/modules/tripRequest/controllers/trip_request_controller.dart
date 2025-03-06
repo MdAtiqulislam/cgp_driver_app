@@ -9,7 +9,6 @@ import 'package:cgp_driver_app/services/api_endpoints.dart';
 import 'package:cgp_driver_app/services/local_services.dart';
 import 'package:cgp_driver_app/services/remote_services.dart';
 import 'package:cgp_driver_app/services/socket_service.dart';
-import 'package:cgp_driver_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -24,15 +23,7 @@ class TripRequestController extends GetxController {
   var isClientMode = false.obs;
   var tripRequestDetails = TripRequestDetailsModel().obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}
@@ -60,8 +51,8 @@ class TripRequestController extends GetxController {
         Get.put(AppbarController());
         Get.find<AppbarController>().getNotifications();
 
-        Get.put(MapController());
-        Get.find<MapController>()
+        Get.put(GeneralMapController());
+        Get.find<GeneralMapController>()
             .generateRoute(origin: origin, destination: destination);
         await markAsRead(notificationId: notificationId);
       }
@@ -161,17 +152,8 @@ class TripRequestController extends GetxController {
 
   Future<void> startTrip() async {
     isLoading.value = true;
-    var currentLocation=await getCurrentLocation();
 
-    var origin = LatLng(
-      currentLocation.latitude,
-      currentLocation.longitude
-    );
 
-    var destination = LatLng(
-      tripRequestDetails.value.data?.pickupLocation?.latitude ?? 0.0,
-      tripRequestDetails.value.data?.pickupLocation?.longitude ?? 0.0,
-    );
     Get.back();
     try {
       Get.toNamed(Routes.ONGOING_TRIP);
@@ -200,6 +182,11 @@ class TripRequestController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void onTripDeclined() {
+    print("ondeclined clicked");
+    Get.offAndToNamed(Routes.HOME);
   }
 
 

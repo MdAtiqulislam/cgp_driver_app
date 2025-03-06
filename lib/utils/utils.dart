@@ -4,12 +4,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../constraints/app_colors.dart';
+import '../constraints/body_text.dart';
 import '../constraints/dimensions.dart';
+import '../constraints/header_text.dart';
 
 /*  ******Function to pic image***** */
 Future<XFile?> picImage(ImageSource imageSource) async {
@@ -24,26 +28,107 @@ Future<XFile?> picImage(ImageSource imageSource) async {
 
 /*  ******Function to crop image***** */
 
+
+
+/*void showDeliveryProofDialog() {
+  showDialog(
+    context: Get.context!,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return PopScope(
+        canPop: false, // Prevent dialog from closing on back press
+        child: AlertDialog(
+          actionsAlignment: MainAxisAlignment.center,
+          titlePadding: const EdgeInsets.all(0),
+          title: Container(
+            decoration: BoxDecoration(
+              color: AppColors.primaryColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(AppDimensions.borderRadius.r),
+                topRight: Radius.circular(AppDimensions.borderRadius.r),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  vertical: 10.0.h, horizontal: AppDimensions.horizontalPadding.w),
+              child: HeaderText(
+                text: "Delivery Completed",
+                size: 20,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          content: BodyText(
+            text: "Do you want to capture a proof image?",
+            maxLine: 10,
+            size: 14,
+          ),
+          actions: <Widget>[
+            MaterialButton(
+              autofocus: true,
+              textColor: Colors.white,
+              focusColor: AppColors.primaryColor,
+              splashColor: AppColors.primaryColor,
+              color: AppColors.primaryColor,
+              focusElevation: 5,
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(color: AppColors.primaryColor),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              onPressed: () async {
+                Navigator.of(context).pop(); // Close dialog
+                XFile? image = await picImage(ImageSource.camera); // Open camera
+                if (image != null) {
+                  print("Captured Image: ${image.path}");
+                }
+              },
+              child: const Text("Yes"),
+            ),
+            MaterialButton(
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(color: AppColors.primaryColor),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              textColor: AppColors.primaryColor,
+              splashColor: AppColors.primaryColor,
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+              },
+              child: const Text("No"),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}*/
+
+
+
+
 Future<CroppedFile?> cropImage({required String filePath,  CropStyle? cropStyle}) async {
   return await ImageCropper().cropImage(
-    cropStyle: cropStyle??CropStyle.circle,
+
     sourcePath: filePath,
-    aspectRatioPresets: [
+    /*   aspectRatioPresets: [
       // CropAspectRatioPreset.square,
       //CropAspectRatioPreset.ratio3x2,
       CropAspectRatioPreset.original,
       // CropAspectRatioPreset.ratio4x3,
       //CropAspectRatioPreset.ratio16x9
-    ],
+    ],*/
     uiSettings: [
       AndroidUiSettings(
-          toolbarTitle: 'Edit',
-          toolbarColor: Colors.white,
-          toolbarWidgetColor: AppColors.primaryColor,
-          initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: false),
+        toolbarTitle: 'Edit',
+        toolbarColor: Colors.white,
+        toolbarWidgetColor: AppColors.primaryColor,
+        initAspectRatio: CropAspectRatioPreset.original,
+        lockAspectRatio: false,
+        cropStyle: cropStyle??CropStyle.circle,
+      ),
       IOSUiSettings(
         title: 'Edit',
+        cropStyle: cropStyle??CropStyle.circle,
       ),
     ],
   );

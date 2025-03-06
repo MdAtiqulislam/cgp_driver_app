@@ -33,6 +33,7 @@ abstract class Routes {
   static const CUSTOM_NAVIGATION = _Paths.CUSTOM_NAVIGATION;
   static const MESSAGING = _Paths.MESSAGING;
   static const CHAT_HISTORY = _Paths.CHAT_HISTORY;
+  static const FAQ_PAGE = _Paths.FAQ_PAGE;
 }
 
 abstract class _Paths {
@@ -65,4 +66,5 @@ abstract class _Paths {
   static const CUSTOM_NAVIGATION = '/custom-navigation';
   static const MESSAGING = '/messaging';
   static const CHAT_HISTORY = '/chat-history';
+  static const FAQ_PAGE = '/faq-page';
 }

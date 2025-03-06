@@ -89,53 +89,40 @@ class CustomNavigationView extends GetView<CustomNavigationController> {
     return SafeArea(
       child: Scaffold(
         appBar: CustomAppBar(),
-        key: scaffoldKey,
-        body: Obx(() {
-          return Stack(
-            children: [
-              if (controller.isNavigating.isTrue)
-                MapBoxNavigationView(
-                  options: controller.options,
-                  onRouteEvent: controller.onRouteEvent,
-                  onCreated: (MapBoxNavigationViewController controller) {
-                    controller.initialize();
-                  },
-                ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: controller.isNavigating.isFalse
-                    ? ElevatedButton(
-                  onPressed: () {
-                    double destinationLat = 23.915522; // Replace with dynamic destination latitude
-                    double destinationLng = 90.392962; // Replace with dynamic destination longitude
-                    controller.startNavigation(destinationLat, destinationLng);
-                  },
-                  child: Text("Start Navigation"),
-                )
-                    : ElevatedButton(
-                  onPressed: () {
-                    controller.stopNavigation();
-                  },
-                  child: const Text("Stop Navigation"),
-                ),
+        body: Stack(
+          children: [
+            MapBoxNavigationView(
+              options: MapBoxOptions(
+                initialLatitude: 37.7749,
+                initialLongitude: -122.4194,
+                zoom: 15.0,
+                tilt: 0.0,
+                bearing: 0.0,
+                enableRefresh: false,
+                alternatives: true,
+                voiceInstructionsEnabled: true,
+                bannerInstructionsEnabled: true,
+                allowsUTurnAtWayPoints: true,
+                mode: MapBoxNavigationMode.drivingWithTraffic,
+                units: VoiceUnits.imperial,
+                simulateRoute: true,
+                language: "en",
               ),
-              if (controller.isNavigating.isTrue)
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Obx(() {
-                    return Container(
-                      padding: const EdgeInsets.all(16.0),
-                      color: Colors.white.withOpacity(0.9),
-                      child: Text(
-                        controller.routeProgress.value,
-                        style: const TextStyle(fontSize: 16.0, color: Colors.black),
-                      ),
-                    );
-                  }),
-                ),
-            ],
-          );
-        }),
+              onRouteEvent: controller.onRouteEvent,
+              onCreated: controller.onMapCreated,
+            ),
+
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                height: 100,
+                width: 100,
+                color: Colors.white,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

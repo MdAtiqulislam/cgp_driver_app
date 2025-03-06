@@ -104,6 +104,17 @@ class VehicleInfoView extends GetView<VehicleInfoController> {
             SizedBox(
               height: AppDimensions.widgetPadding.h,
             ),
+            CustomTextField(
+              levelText: "Make",
+              hintText: "Make",
+              isRequired: true,
+              validatorText: "Required",
+              textInputType: TextInputType.phone,
+              controller: controller.makeController,
+            ),
+            SizedBox(
+              height: AppDimensions.widgetPadding.h,
+            ),
             CustomDropDownField(
               itemList: controller.licenseAuthorizedOfficeList,
               onChange: (value){},

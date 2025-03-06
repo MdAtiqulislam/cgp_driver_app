@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
@@ -17,7 +18,7 @@ class CountdownController extends GetxController {
 
   void startCountdown() {
     playSound();
-    Timer.periodic(Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
       if (remainingTime.value <= 0) {
         timer.cancel();
       } else {
@@ -34,7 +35,9 @@ class CountdownController extends GetxController {
       audioPlayer.resume();
       await Vibration.vibrate(duration: 500); // Vibrate for 500 milliseconds
     } catch (e) {
-      print('Error playing sound: $e');
+      if (kDebugMode) {
+        print('Error playing sound: $e');
+      }
     }
   }
 }

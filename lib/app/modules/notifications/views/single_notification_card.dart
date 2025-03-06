@@ -45,7 +45,7 @@ class SingleNotificationCard extends StatelessWidget {
                         "Request from: ${notificationModel.data?.requestedByUserName ?? " "}",
                     color: AppColors.secondaryColor,
                   ),
-                  Container(
+                  SizedBox(
                     width: Get.width,
                       child: BodyText(text: formatDateTime(dateTimeString: notificationModel.createdAt.toString()),align: TextAlign.end,color: AppColors.primaryColor,))
                 ],

@@ -107,7 +107,7 @@ class ProfileView extends GetView<ProfileController> {
             Positioned(
               right: AppDimensions.horizontalPadding.w,
               top: AppDimensions.contentPadding.h,
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Row(
@@ -169,9 +169,9 @@ class ProfileView extends GetView<ProfileController> {
               BodyText(
                   text:
                       "Driving License: ${controller.rider.value.drivingLicenseNumber ?? "N/A"}"),
-              BodyText(text: "Vehicle License: N/A"),
-              BodyText(text: "Driving Experience: N/A"),
-              BodyText(text: "Total Trip Completed: N/A"),
+              const BodyText(text: "Vehicle License: N/A"),
+              const BodyText(text: "Driving Experience: N/A"),
+              const BodyText(text: "Total Trip Completed: N/A"),
             ],
           ),
         ),
@@ -196,8 +196,8 @@ class ProfileView extends GetView<ProfileController> {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppDimensions.borderRadius.r),
           color: Colors.white,
-          boxShadow: [BoxShadow(color: AppColors.shadowColor, blurRadius: 5)]),
-      child: Column(
+          boxShadow: const [BoxShadow(color: AppColors.shadowColor, blurRadius: 5)]),
+      child: const Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -281,7 +281,7 @@ class ProfileView extends GetView<ProfileController> {
         separatorBuilder: (BuildContext context, int index) {
           return Padding(
             padding:  EdgeInsets.symmetric(vertical: AppDimensions.widgetPadding.h),
-            child: Divider(),
+            child: const Divider(),
           );
         },
       ),
@@ -298,7 +298,7 @@ class ProfileView extends GetView<ProfileController> {
           localImage: "assets/images/moc_image_${index % 10}.png",
         ),
         SizedBox(width: AppDimensions.contentPadding.w,),
-        Expanded(
+        const Expanded(
           child: HeaderText(
             text: "Delivery Request from Timber Mart",
             maxLine: 4,
@@ -332,7 +332,7 @@ class ProfileView extends GetView<ProfileController> {
             padding: EdgeInsets.symmetric(
                 horizontal: AppDimensions.widgetPadding.w,
                 vertical: AppDimensions.widgetPadding.h),
-            child: HeaderText(text: "Trip History",),
+            child: const HeaderText(text: "Trip History",),
           ),
         ),
       ),
@@ -361,11 +361,11 @@ class ProfileView extends GetView<ProfileController> {
             separatorBuilder: (BuildContext context, int index) {
               return Padding(
                 padding:  EdgeInsets.symmetric(vertical: AppDimensions.widgetPadding.h),
-                child: Divider(),
+                child: const Divider(),
               );
             },
           ),
-          Divider(),
+          const Divider(),
           if(3==3)AppButton(text: "View all", onTap: (){})
         ],
 
@@ -389,7 +389,7 @@ Widget singleTripCard({required int index}) {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            HeaderText(
+            const HeaderText(
               text: "Timber Mart",
               maxLine: 4,
               color: AppColors.primaryColor,
@@ -400,7 +400,7 @@ Widget singleTripCard({required int index}) {
         ),
       ),
       SizedBox(width: AppDimensions.contentPadding.w,),
-      Column(
+      const Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Row(

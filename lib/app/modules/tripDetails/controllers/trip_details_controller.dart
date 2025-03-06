@@ -2,22 +2,13 @@ import 'package:cgp_driver_app/app/modules/tripDetails/models/trip_history_detai
 import 'package:cgp_driver_app/services/api_endpoints.dart';
 import 'package:cgp_driver_app/services/remote_services.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 class TripDetailsController extends GetxController {
 
   var isLoading=false.obs;
   var tripDetails=TripHistoryDetailsModel().obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}

@@ -1,153 +1,3 @@
-/*
-
-import 'package:cgp_driver_app/app/modules/tripRequest/models/trip_request_details_model.dart';
-import 'package:cgp_driver_app/constraints/app_colors.dart';
-import 'package:cgp_driver_app/services/api_endpoints.dart';
-import 'package:cgp_driver_app/services/remote_services.dart';
-import 'package:get/get.dart';
-
-class StartTripController extends GetxController {
-  var isClientMode = false.obs;
-  var isExpand = true.obs;
-  var isLoading = false.obs;
-  var state = "".obs; //pickup    or   delivery
-  var status = "".obs; //"movingToPickupLocation"
-  var actionButtonText = "Reached Pickup Location".obs;
-  var reachedToDestination = false.obs;
-  var activeButton = true.obs;
-
-  var tripRequestDetails = TripRequestDetailsModel().obs;
-
-  var pickupDistance = 0.0.obs;
-  var pickupDuration = 0.0.obs;
-  var buttonColor=AppColors.primaryColor.obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {}
-
-  void getPickupDistanceAmdDuration() async {}
-
-  void controlButtonStatus() {
-    if (status.value == "movingToDestination") {
-      state.value == "pickup"
-          ? actionButtonText.value = "Cancel Trip"
-          : actionButtonText.value = "Moving to Destination";
-    } else if (status.value == "closerToDestination") {
-      if (!reachedToDestination.value) {
-        state.value == "pickup"
-            ? actionButtonText.value = "Reached to Pickup Location?"
-            : actionButtonText.value = "Reached to Delivery Location?";
-      }
-    } else if (status.value == "waiting") {
-      state.value == "pickup"
-          ? actionButtonText.value = "Picked Up"
-          : actionButtonText.value = "Unloaded";
-    } else if (status.value == "completed") {
-      state.value == "pickup"
-          ? actionButtonText.value = "Moving to Destination"
-          : actionButtonText.value = "Complete Trip";
-    }
-  }
-
-  void buttonAction() {
-    print(status.value);
-
-    if (status.value == "movingToDestination") {
-      if(state.value=="pickup"){
-        buttonColor.value=AppColors.errorColor;
-        cancelTrip();
-      }else{
-        buttonColor.value=AppColors.primaryColor;
-        //cancelTrip();
-      }
-    }
-    else if (status.value == "closerToDestination") {
-      reachedDestination();
-      /* state.value=="pickup"
-         ? reachedDestination()
-         : actionButtonText.value="Reached to Delivery Location?";*/
-    }
-    else if (status.value == "waiting") {
-
-      state.value == "pickup"
-          ? completePickedUp() //actionButtonText.value = "Picked Up"
-          : completeUnload(); //actionButtonText.value = "Unloaded";
-    }
-    else if (status.value == "completed") {
-      state.value == "pickup"
-          ? actionButtonText.value = "Moving to Destination"
-          : actionButtonText.value = "Complete Trip";
-    }
-  }
-
-  void cancelTrip() {}
-
-  reachedDestination() {
-      status.value = "waiting";
-      reachedToDestination.value = true;
-      controlButtonStatus();
-
-  }
-
-  completePickedUp()async {
-    isLoading.value=true;
-    var endPoint = APIEndPoints.changeTripStatus
-        .replaceAll("{id}", tripRequestDetails.value.data?.id ?? "");
-    var parameters={"status":"picked_up"};
-
-    try {
-      var data=await RemoteServices.puttRequest(endPoint: endPoint,parameters: parameters);
-
-      if(data!=null){
-
-
-
-        print("completePickup");
-        status.value = "movingToDestination";
-        state.value = "destination";
-        reachedToDestination.value = false;
-        activeButton.value=false;
-        controlButtonStatus();
-      }
-    } finally {
-      isLoading.value=false;
-    }
-
-  }
-
-  completeUnload() async {
-    isLoading.value=true;
-    var endPoint = APIEndPoints.changeTripStatus
-        .replaceAll("{id}", tripRequestDetails.value.data?.id ?? "");
-    var parameters={"status":"delivered"};
-
-    try {
-      var data=await RemoteServices.puttRequest(endPoint: endPoint,parameters: parameters);
-
-      if(data!=null){
-        print("completeDelivery");
-        status.value = "completed";
-        state.value = "destination";
-        //reachedToDestination.value = false;
-        //activeButton.value=false;
-        controlButtonStatus();
-      }
-    } finally {
-      isLoading.value=false;
-    }
-  }
-}
-*/
 
 import 'dart:async';
 
@@ -159,6 +9,7 @@ import 'package:cgp_driver_app/constraints/app_colors.dart';
 import 'package:cgp_driver_app/services/api_endpoints.dart';
 import 'package:cgp_driver_app/services/remote_services.dart';
 import 'package:cgp_driver_app/utils/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -181,8 +32,8 @@ class StartTripController extends GetxController {
   var pickupDistance = "".obs;
   var pickupDuration = 0.0.obs;
   var buttonColor = AppColors.primaryColor.obs;
-  var startPoint=LatLng(0.0, 0.0).obs;
-  var destinationPoint=LatLng(0.0, 0.0).obs;
+  var startPoint=const LatLng(0.0, 0.0).obs;
+  var destinationPoint=const LatLng(0.0, 0.0).obs;
 
 
 
@@ -194,16 +45,7 @@ class StartTripController extends GetxController {
 
   var destinationPointName="pickup".obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    //getPickupDistanceAndDuration();
-  }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {
@@ -221,7 +63,9 @@ class StartTripController extends GetxController {
       ),
     ).listen((Position position) async {
       pickupDistance.value =calculateDistance(LatLng(position.latitude, position.longitude), destination);
-      print("pickupDistance $pickupDistance");
+      if (kDebugMode) {
+        print("pickupDistance $pickupDistance");
+      }
     });
   }
 
@@ -229,7 +73,6 @@ class StartTripController extends GetxController {
 
 
   void controlButtonStatus() {
-    print(status.value);
     switch (status.value) {
       case TripStatus.movingToDestination:
         actionButtonText.value = state.value == TripState.pickup
@@ -256,7 +99,6 @@ class StartTripController extends GetxController {
   }
 
   void buttonAction() {
-    print(status.value.name);
 
     switch (status.value) {
       case TripStatus.movingToDestination:
@@ -320,12 +162,12 @@ class StartTripController extends GetxController {
            tripRequestDetails.value.data?.pickupLocation?.longitude ?? 0.0,
          );
 
-        Get.put(MapController());
-        Get.find<MapController>().stopLocationUpdates();
+        Get.put(GeneralMapController());
+        Get.find<GeneralMapController>().stopLocationUpdates();
         await Future.delayed(const Duration(milliseconds: 500));
         getDistanceFromCurrentLocation(destination: destinationPoint.value);
-        Get.find<MapController>().startNavigation(destination: destinationPoint.value);
-        Get.find<MapController>()
+        Get.find<GeneralMapController>().startNavigation(destination: destinationPoint.value);
+        Get.find<GeneralMapController>()
             .startLocationUpdates(destination: destinationPoint.value);
 
         status.value = TripStatus.movingToDestination;
@@ -355,7 +197,7 @@ class StartTripController extends GetxController {
         state.value = TripState.delivery;
         controlButtonStatus();
         //Get.put(MapController());
-        final mapController = Get.find<MapController>();
+        final mapController = Get.find<GeneralMapController>();
         mapController.stopLocationUpdates();
         await Future.delayed(const Duration(milliseconds: 500));
 
@@ -411,7 +253,7 @@ class StartTripController extends GetxController {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Choose Navigation App'),
+          title: const Text('Choose Navigation App'),
           content: SingleChildScrollView(
             child: ListBody(
               children: availableApps.map((app) {
@@ -442,17 +284,17 @@ class StartTripController extends GetxController {
       NavigationApp(
         name: 'Google Maps',
         url: 'https://www.google.com/maps/dir/?api=1&origin=${startPoint.latitude},${startPoint.longitude}&destination=${endPoint.latitude},${endPoint.longitude}&travelmode=driving',
-        icon: Icon(Icons.map, color: Colors.blue),
+        icon: const Icon(Icons.map, color: Colors.blue),
       ),
       NavigationApp(
         name: 'Apple Maps',
         url: 'http://maps.apple.com/?saddr=${startPoint.latitude},${startPoint.longitude}&daddr=${endPoint.latitude},${endPoint.longitude}',
-        icon: Icon(Icons.map, color: Colors.black),
+        icon: const Icon(Icons.map, color: Colors.black),
       ),
       NavigationApp(
         name: 'Waze',
         url: 'https://waze.com/ul?ll=${endPoint.latitude},${endPoint.longitude}&navigate=yes',
-        icon: Icon(Icons.directions, color: Colors.purple),
+        icon: const Icon(Icons.directions, color: Colors.purple),
       ),
     ];
 

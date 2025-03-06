@@ -12,15 +12,8 @@ class VehicleInfoController extends GetxController {
   var vehicleRegistrationController=TextEditingController();
   var vehicleTaxTokenController=TextEditingController();
   var ownerNameController=TextEditingController();
-  @override
-  void onInit() {
-    super.onInit();
-  }
+  var makeController=TextEditingController();
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}

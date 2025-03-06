@@ -121,7 +121,7 @@ class ReviewAndRatingsView extends GetView<ReviewAndRatingsController> {
                 ),
               ],
             ),
-            Divider(),
+            const Divider(),
             SizedBox(height: AppDimensions.widgetPadding.h),
             CustomTextField(
               levelText: "Review",

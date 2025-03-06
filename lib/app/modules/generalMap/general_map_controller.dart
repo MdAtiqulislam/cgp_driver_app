@@ -74,7 +74,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../services/location_services.dart';
 
 
-class MapController extends GetxController {
+class GeneralMapController extends GetxController {
   final Completer<GoogleMapController> mapController = Completer();
   var latitude = 0.0.obs;
   var longitude = 0.0.obs;
@@ -142,7 +142,7 @@ class MapController extends GetxController {
    // polyLines.value={};
     polyLines.clear();
 
-    const String apiKey = 'AIzaSyCUqRnsyjWiluojL3z2-9VRoZ7ABubgbpE';
+    const String apiKey = 'AIzaSyBprY90fvqn9LQqEhe4mSIyDf1UekyT2Po';
     final String url =
         'https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&key=$apiKey';
 
@@ -280,8 +280,6 @@ class MapController extends GetxController {
       );
 
       if (distanceInMeters <= 100) {
-        print("Calling.......");
-        print(Get.find<StartTripController>().isButtonEnabled.value);
         Get.put(StartTripController());
 
         if(!Get.find<StartTripController>().reachedToDestination.value){
@@ -305,7 +303,6 @@ class MapController extends GetxController {
   }
 
   void stopLocationUpdates() {
-    print("Stop Location update is called.");
     positionStreamSubscription?.cancel();
     positionStreamSubscription = null;
   }

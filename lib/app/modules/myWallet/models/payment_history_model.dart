@@ -33,7 +33,7 @@ class PaymentHistoryModel {
 }
 
 class PaymentHistoryData {
-  final int? currentBalance;
+  final dynamic currentBalance;
   final int? lastSettlementAmount;
   final List<SinglePaymentModel>? paymentHistory;
 
@@ -67,9 +67,9 @@ class SinglePaymentModel {
   final dynamic warehouseId;
   final int? riderId;
   final int? orderId;
-  final int? fareAmount;
-  final int? gst;
-  final int? tradebarFee;
+  final String? fareAmount;
+  final String? gst;
+  final String? tradebarFee;
   final dynamic netBalance;
   final dynamic payableAmount;
   final int? settlementAmount;

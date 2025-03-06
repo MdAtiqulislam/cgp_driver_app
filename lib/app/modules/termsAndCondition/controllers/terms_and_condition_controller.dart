@@ -1,20 +1,38 @@
 import 'package:get/get.dart';
 
+import '../../../../services/api_endpoints.dart';
+import '../../../../services/remote_services.dart';
+import '../models/terms_and_condition_model.dart';
+
 class TermsAndConditionController extends GetxController {
-  //TODO: Implement TermsAndConditionController
+  var isLoading = false.obs;
 
-  final count = 0.obs;
+  var termsAndConditionModel=TermsAndConditionModel().obs;
+
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
+    await getTermsAndCondition();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {}
-  void increment() => count.value++;
+
+  Future<void> getTermsAndCondition() async {
+    isLoading.value=true;
+    var link="${APIEndPoints.baseUrlMessaging}${APIEndPoints.getTermsAndCondition}";
+    var parameters={
+      "type":"rider"
+    };
+
+    try {
+      var response=await RemoteServices.chatGetRequest(link: link,parameters: parameters);
+      if(response!=null){
+        termsAndConditionModel.value=TermsAndConditionModel.fromJson(response);
+      }
+    } finally {
+      isLoading.value=false;
+    }
+  }
 }
