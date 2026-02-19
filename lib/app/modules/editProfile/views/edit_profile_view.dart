@@ -261,7 +261,6 @@ class EditProfileView extends GetView<EditProfileController> {
         IconButton(
           onPressed: () {
             controller.base64ImageProfile.value = "";
-
             Get.bottomSheet(
               isScrollControlled: true,
               ignoreSafeArea: false,

@@ -30,6 +30,8 @@ class SocketService extends GetxService {
 
   void connect() {
     // Configure the Socket.io client
+  //  var socketUrl="https://customer-api.tradebar.com.au";
+
     socket = IO.io(APIEndPoints.baseUrl, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,

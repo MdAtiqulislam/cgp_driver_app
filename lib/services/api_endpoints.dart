@@ -32,9 +32,7 @@ class APIEndPoints {
   static const getTripHistory="/deliveries";
 
   static const tripDetails="/deliveries/{id}";
-
   static const updateRiderLocation="/locations/rider/update-location";
-
   static const updateOnlineStatus="/locations/rider/update-online-status";
   static const logOut="/auth/logout";
 

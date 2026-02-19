@@ -5,7 +5,6 @@ import 'package:cgp_driver_app/models/login_verification_model.dart';
 import 'package:cgp_driver_app/other_controllers/appbar_controller.dart';
 import 'package:cgp_driver_app/other_controllers/my_drawer_controller.dart';
 import 'package:cgp_driver_app/services/location_services.dart';
-import 'package:cgp_driver_app/services/notification_services.dart';
 import 'package:cgp_driver_app/services/socket_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';

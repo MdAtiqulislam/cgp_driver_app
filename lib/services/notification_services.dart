@@ -1,6 +1,4 @@
 
-
-
 import 'dart:async';
 import 'package:flutter_callkit_incoming/entities/entities.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
