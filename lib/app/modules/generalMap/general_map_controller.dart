@@ -118,11 +118,11 @@ class GeneralMapController extends GetxController {
   Future<void> getCurrentLocation() async {
     LocationServices.getCurrentLocation().then(
           (value) {
-        latitude.value = value.latitude;
-        longitude.value = value.longitude;
+        latitude.value = value?.latitude??0.0;
+        longitude.value = value?.longitude??0.0;
         setCameraPosition();
         return LocationServices.getAddress(
-          LatLng(value.latitude, value.longitude),
+          LatLng(value?.latitude??0.0, value?.longitude??0.0),
         );
       },
     );

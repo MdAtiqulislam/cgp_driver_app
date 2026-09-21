@@ -217,8 +217,8 @@ class VerifyOTPController extends GetxController {
  var position=await   LocationServices.getCurrentLocation();
  var endPoint=APIEndPoints.updateRiderLocation;
  var body={
-   "latitude": position.latitude.toString(),
-   "longitude": position.longitude.toString()
+   "latitude": position?.latitude.toString(),
+   "longitude": position?.longitude.toString()
  };
 
  var response=await RemoteServices.putRequest(endPoint:endPoint ,body: body);

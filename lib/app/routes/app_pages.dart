@@ -1,65 +1,68 @@
 import 'package:get/get.dart';
 
-import 'package:cgp_driver_app/app/modules/chatHistory/bindings/chat_history_binding.dart';
-import 'package:cgp_driver_app/app/modules/chatHistory/views/chat_history_view.dart';
-import 'package:cgp_driver_app/app/modules/completeTrip/bindings/complete_trip_binding.dart';
-import 'package:cgp_driver_app/app/modules/completeTrip/views/complete_trip_view.dart';
-import 'package:cgp_driver_app/app/modules/customNavigation/bindings/custom_navigation_binding.dart';
-import 'package:cgp_driver_app/app/modules/customNavigation/views/custom_navigation_view.dart';
-import 'package:cgp_driver_app/app/modules/driverInfo/bindings/driver_info_binding.dart';
-import 'package:cgp_driver_app/app/modules/driverInfo/views/driver_info_view.dart';
-import 'package:cgp_driver_app/app/modules/drivingLicenseInfo/bindings/driving_license_info_binding.dart';
-import 'package:cgp_driver_app/app/modules/drivingLicenseInfo/views/driving_license_info_view.dart';
-import 'package:cgp_driver_app/app/modules/editProfile/bindings/edit_profile_binding.dart';
-import 'package:cgp_driver_app/app/modules/editProfile/views/edit_profile_view.dart';
-import 'package:cgp_driver_app/app/modules/faqPage/bindings/faq_page_binding.dart';
-import 'package:cgp_driver_app/app/modules/faqPage/views/faq_page_view.dart';
-import 'package:cgp_driver_app/app/modules/forgotPassword/bindings/forgot_password_binding.dart';
-import 'package:cgp_driver_app/app/modules/forgotPassword/views/forgot_password_view.dart';
-import 'package:cgp_driver_app/app/modules/home/bindings/home_binding.dart';
-import 'package:cgp_driver_app/app/modules/home/views/home_view.dart';
-import 'package:cgp_driver_app/app/modules/imageVerification/bindings/image_verification_binding.dart';
-import 'package:cgp_driver_app/app/modules/imageVerification/views/image_verification_view.dart';
-import 'package:cgp_driver_app/app/modules/login/bindings/login_binding.dart';
-import 'package:cgp_driver_app/app/modules/login/views/login_view.dart';
-import 'package:cgp_driver_app/app/modules/messaging/bindings/messaging_binding.dart';
-import 'package:cgp_driver_app/app/modules/messaging/views/messaging_view.dart';
-import 'package:cgp_driver_app/app/modules/myWallet/bindings/my_wallet_binding.dart';
-import 'package:cgp_driver_app/app/modules/myWallet/views/my_wallet_view.dart';
-import 'package:cgp_driver_app/app/modules/notifications/bindings/notifications_binding.dart';
-import 'package:cgp_driver_app/app/modules/notifications/views/notifications_view.dart';
-import 'package:cgp_driver_app/app/modules/ongoingTrip/bindings/ongoing_trip_binding.dart';
-import 'package:cgp_driver_app/app/modules/ongoingTrip/views/ongoing_trip_view.dart';
-import 'package:cgp_driver_app/app/modules/password/bindings/password_binding.dart';
-import 'package:cgp_driver_app/app/modules/password/views/password_view.dart';
-import 'package:cgp_driver_app/app/modules/profile/bindings/profile_binding.dart';
-import 'package:cgp_driver_app/app/modules/profile/views/profile_view.dart';
-import 'package:cgp_driver_app/app/modules/registration/bindings/registration_binding.dart';
-import 'package:cgp_driver_app/app/modules/registration/views/registration_view.dart';
-import 'package:cgp_driver_app/app/modules/reviewAndRatings/bindings/review_and_ratings_binding.dart';
-import 'package:cgp_driver_app/app/modules/reviewAndRatings/views/review_and_ratings_view.dart';
-import 'package:cgp_driver_app/app/modules/serviceType/bindings/service_type_binding.dart';
-import 'package:cgp_driver_app/app/modules/serviceType/views/service_type_view.dart';
-import 'package:cgp_driver_app/app/modules/splashScreen/bindings/splash_screen_binding.dart';
-import 'package:cgp_driver_app/app/modules/splashScreen/views/splash_screen_view.dart';
-import 'package:cgp_driver_app/app/modules/startTrip/bindings/start_trip_binding.dart';
-import 'package:cgp_driver_app/app/modules/startTrip/views/start_trip_view.dart';
-import 'package:cgp_driver_app/app/modules/support/bindings/support_binding.dart';
-import 'package:cgp_driver_app/app/modules/support/views/support_view.dart';
-import 'package:cgp_driver_app/app/modules/termsAndCondition/bindings/terms_and_condition_binding.dart';
-import 'package:cgp_driver_app/app/modules/termsAndCondition/views/terms_and_condition_view.dart';
-import 'package:cgp_driver_app/app/modules/testChat/bindings/test_chat_binding.dart';
-import 'package:cgp_driver_app/app/modules/testChat/views/test_chat_view.dart';
-import 'package:cgp_driver_app/app/modules/tripDetails/bindings/trip_details_binding.dart';
-import 'package:cgp_driver_app/app/modules/tripDetails/views/trip_details_view.dart';
-import 'package:cgp_driver_app/app/modules/tripHistory/bindings/trip_history_binding.dart';
-import 'package:cgp_driver_app/app/modules/tripHistory/views/trip_history_view.dart';
-import 'package:cgp_driver_app/app/modules/tripRequest/bindings/trip_request_binding.dart';
-import 'package:cgp_driver_app/app/modules/tripRequest/views/trip_request_view.dart';
-import 'package:cgp_driver_app/app/modules/vehicleInfo/bindings/vehicle_info_binding.dart';
-import 'package:cgp_driver_app/app/modules/vehicleInfo/views/vehicle_info_view.dart';
-import 'package:cgp_driver_app/app/modules/verifyOTP/bindings/verify_o_t_p_binding.dart';
-import 'package:cgp_driver_app/app/modules/verifyOTP/views/verify_o_t_p_view.dart';
+import '../modules/chatHistory/bindings/chat_history_binding.dart';
+import '../modules/chatHistory/views/chat_history_view.dart';
+import '../modules/completeTrip/bindings/complete_trip_binding.dart';
+import '../modules/completeTrip/views/complete_trip_view.dart';
+import '../modules/customNavigation/bindings/custom_navigation_binding.dart';
+import '../modules/customNavigation/views/custom_navigation_view.dart';
+import '../modules/driverInfo/bindings/driver_info_binding.dart';
+import '../modules/driverInfo/views/driver_info_view.dart';
+import '../modules/drivingLicenseInfo/bindings/driving_license_info_binding.dart';
+import '../modules/drivingLicenseInfo/views/driving_license_info_view.dart';
+import '../modules/editProfile/bindings/edit_profile_binding.dart';
+import '../modules/editProfile/views/edit_profile_view.dart';
+import '../modules/faqPage/bindings/faq_page_binding.dart';
+import '../modules/faqPage/views/faq_page_view.dart';
+import '../modules/forgotPassword/bindings/forgot_password_binding.dart';
+import '../modules/forgotPassword/views/forgot_password_view.dart';
+import '../modules/home/bindings/home_binding.dart';
+import '../modules/home/views/home_view.dart';
+import '../modules/imageVerification/bindings/image_verification_binding.dart';
+import '../modules/imageVerification/views/image_verification_view.dart';
+import '../modules/login/bindings/login_binding.dart';
+import '../modules/login/views/login_view.dart';
+import '../modules/messaging/bindings/messaging_binding.dart';
+import '../modules/messaging/views/messaging_view.dart';
+import '../modules/myWallet/bindings/my_wallet_binding.dart';
+import '../modules/myWallet/views/my_wallet_view.dart';
+import '../modules/notifications/bindings/notifications_binding.dart';
+import '../modules/notifications/views/notifications_view.dart';
+import '../modules/onbording/bindings/onbording_binding.dart';
+import '../modules/onbording/views/onbording_view.dart';
+import '../modules/ongoingTrip/bindings/ongoing_trip_binding.dart';
+import '../modules/ongoingTrip/views/ongoing_trip_view.dart';
+import '../modules/password/bindings/password_binding.dart';
+import '../modules/password/views/password_view.dart';
+import '../modules/profile/bindings/profile_binding.dart';
+import '../modules/profile/views/profile_view.dart';
+import '../modules/registration/bindings/registration_binding.dart';
+import '../modules/registration/views/registration_view.dart';
+import '../modules/reviewAndRatings/bindings/review_and_ratings_binding.dart';
+import '../modules/reviewAndRatings/views/review_and_ratings_view.dart';
+import '../modules/serviceType/bindings/service_type_binding.dart';
+import '../modules/serviceType/views/service_type_view.dart';
+import '../modules/splashScreen/bindings/splash_screen_binding.dart';
+import '../modules/splashScreen/views/location_permission_discloser.dart';
+import '../modules/splashScreen/views/splash_screen_view.dart';
+import '../modules/startTrip/bindings/start_trip_binding.dart';
+import '../modules/startTrip/views/start_trip_view.dart';
+import '../modules/support/bindings/support_binding.dart';
+import '../modules/support/views/support_view.dart';
+import '../modules/termsAndCondition/bindings/terms_and_condition_binding.dart';
+import '../modules/termsAndCondition/views/terms_and_condition_view.dart';
+import '../modules/testChat/bindings/test_chat_binding.dart';
+import '../modules/testChat/views/test_chat_view.dart';
+import '../modules/tripDetails/bindings/trip_details_binding.dart';
+import '../modules/tripDetails/views/trip_details_view.dart';
+import '../modules/tripHistory/bindings/trip_history_binding.dart';
+import '../modules/tripHistory/views/trip_history_view.dart';
+import '../modules/tripRequest/bindings/trip_request_binding.dart';
+import '../modules/tripRequest/views/trip_request_view.dart';
+import '../modules/vehicleInfo/bindings/vehicle_info_binding.dart';
+import '../modules/vehicleInfo/views/vehicle_info_view.dart';
+import '../modules/verifyOTP/bindings/verify_o_t_p_binding.dart';
+import '../modules/verifyOTP/views/verify_o_t_p_view.dart';
 
 part 'app_routes.dart';
 
@@ -67,6 +70,7 @@ class AppPages {
   AppPages._();
 
   static const INITIAL = Routes.SPLASH_SCREEN;
+  //static const INITIAL = Routes.SPLASH_SCREEN;
   // static const INITIAL = Routes.CUSTOM_NAVIGATION;
   // static const INITIAL = Routes.HOME;
 //  static const INITIAL = Routes.TRIP_REQUEST;
@@ -221,6 +225,11 @@ class AppPages {
       name: _Paths.FAQ_PAGE,
       page: () => FaqPageView(),
       binding: FaqPageBinding(),
+    ),
+    GetPage(
+      name: _Paths.ONBORDING,
+      page: () => const OnbordingView(),
+      binding: OnbordingBinding(),
     ),
   ];
 }

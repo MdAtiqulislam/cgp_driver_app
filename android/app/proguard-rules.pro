@@ -1,26 +1,63 @@
-# ========================
+# ------------------------------
+# Flutter & Plugins
+# ------------------------------
+-keep class io.flutter.embedding.** { *; }
+-keep class io.flutter.plugin.** { *; }
+-keep class io.flutter.plugins.** { *; }
+-keep class io.flutter.view.** { *; }
+-keep class dev.flutter.pigeon.** { *; }
+
+# ------------------------------
+# Geolocator & Firebase
+# ------------------------------
+-keep class com.baseflow.geolocator.** { *; }
+-keep class com.google.firebase.** { *; }
+
+# ------------------------------
 # Stripe SDK
-# ========================
--dontwarn com.stripe.android.pushProvisioning.**
+# ------------------------------
+-dontwarn com.stripe.android.**
+-keep class com.stripe.android.** { *; }
 
-# ========================
-# Jackson Databind & XML
-# ========================
+# ------------------------------
+# Jackson & XML
+# ------------------------------
+-dontwarn com.fasterxml.jackson.**
+-dontwarn org.codehaus.jackson.**
 -dontwarn java.beans.**
--dontwarn org.w3c.dom.bootstrap.**
--dontwarn com.fasterxml.jackson.databind.ext.**
--dontwarn org.slf4j.impl.StaticLoggerBinder
--dontwarn org.slf4j.**
-
-# Keep annotations and reflective classes
--keepattributes Signature, InnerClasses, EnclosingMethod, RuntimeVisibleAnnotations
-
-# Keep Jackson JSON classes
 -keep class com.fasterxml.jackson.** { *; }
--keep class org.codehaus.jackson.** { *; }
 
-# Optional (helps with Pusher / Retrofit)
+# ------------------------------
+# Network & Retrofit
+# ------------------------------
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -dontwarn retrofit2.**
 -dontwarn javax.annotation.**
+-dontwarn org.slf4j.**
+-dontwarn com.google.android.gms.**
+
+# ------------------------------
+# Mapbox
+# ------------------------------
+-keep class com.eopeter.fluttermapboxnavigation.** { *; }
+-dontwarn com.eopeter.fluttermapboxnavigation.**
+
+
+
+
+# ------------------------------
+# Play Core / Deferred Components
+# ------------------------------
+-keep class com.google.android.play.core.** { *; }
+-dontwarn com.google.android.play.core.**
+
+
+# ------------------------------
+# General R8 fix
+# ------------------------------
+-ignorewarnings
+-keepattributes *Annotation*
+-keepattributes Signature
+-keepattributes InnerClasses
+-keepattributes EnclosingMethod

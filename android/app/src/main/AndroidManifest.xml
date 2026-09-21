@@ -61,6 +61,10 @@
 
         <!-- Mapbox Telemetry Receiver -->
         <receiver
+            android:name="com.mapbox.navigation.trip.notification.internal.TripNotificationActionReceiver"
+            android:exported="false" />
+
+        <receiver
             android:name="com.mapbox.android.telemetry.TelemetryReceiver"
             android:enabled="true"
             android:exported="false">
@@ -74,8 +78,13 @@
     <!-- Required to query activities that can process text -->
     <queries>
         <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+
 </manifest>

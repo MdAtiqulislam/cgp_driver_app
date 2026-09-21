@@ -4,6 +4,7 @@ import 'package:cgp_driver_app/common_widgets/custom_text_field.dart';
 import 'package:cgp_driver_app/constraints/dimensions.dart';
 import 'package:cgp_driver_app/constraints/header_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
@@ -88,6 +89,7 @@ class LoginView extends GetView<LoginController> {
                 onTap: () {
                   if ((_formKey.currentState?.validate() ?? false)) {
                     controller.login();
+                 //  showLocationDisclosure();
                     //  Get.toNamed(Routes.IMAGE_VERIFICATION);
                   }
                 },
@@ -120,4 +122,43 @@ class LoginView extends GetView<LoginController> {
       ],
     );
   }
+
+/*  void showLocationDisclosure() {
+    Get.dialog(
+      AlertDialog(
+        title: const Text("Background Location Required"),
+        content: const SingleChildScrollView(
+          child: Text(
+              "This app collects location data to enable live driver tracking "
+                  "even when the app is closed or not in use.\n\n"
+                  "Location data is used to:\n"
+                  "• Track trips in real-time\n"
+                  "• Ensure customer safety\n"
+                  "• Improve delivery monitoring\n\n"
+                  "Location data is securely transmitted to our server and is not shared with third parties.\n\n"
+                  "By tapping 'Allow', you consent to background location access."
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              SystemNavigator.pop();
+            },
+            child: const Text("Deny"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Get.back();
+              //await Get.find<SplashScreenController>().requestLocationPermission();
+              controller.login();
+            },
+            child: const Text("Allow"),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+  }*/
+
+
 }

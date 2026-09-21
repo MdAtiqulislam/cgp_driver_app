@@ -370,8 +370,19 @@ class EditProfileController extends GetxController {
     licencePlateController.text = selectedVehicleModel.value.licensePlate ?? "";
     registrationNumberController.text =
         selectedVehicleModel.value.registrationNumber ?? "";
-    selectedYear =
-        (selectedVehicleModel.value.year ?? DateTime.now().year).toString();
+    final modelYear =
+    (selectedVehicleModel.value.year ?? DateTime.now().year).toString();
+
+    if (!yearList.contains(modelYear)) {
+      yearList.add(modelYear);
+      yearList.sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+    }
+
+    selectedYear = modelYear;
+
+
+
+
   }
 
   Map<String, String> getVehicleFormData() {

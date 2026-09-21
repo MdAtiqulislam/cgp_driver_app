@@ -56,7 +56,15 @@ class APIEndPoints {
 
   static const appVersionEndpoint="/app/version";
 
+  static const makePaymentRequest="/payments/withdraw-request";
 
+  static const setDefaultBank="/rider-bank-info/set-default/{id}";
+
+  static var deleteNotificationById="/notifications/{notificationId}";
+
+  static var markAllAsReadNotification="/notifications/mark-all-as-read";
+
+  static const deleteAllNotifications="/notifications/delete-all";
 
 
 }

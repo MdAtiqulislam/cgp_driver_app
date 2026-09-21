@@ -1,120 +1,23 @@
 
-/*
-import 'package:flutter/foundation.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-class LocationServices{
-
- static late LocationSettings locationSettings;
-
-  static Future<Position> getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Test if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      locationSettings = AndroidSettings(
-          accuracy: LocationAccuracy.high,
-          distanceFilter: 100,
-          forceLocationManager: true,
-          intervalDuration: const Duration(seconds: 10),
-          //(Optional) Set foreground notification config to keep the app alive
-          //when going to the background
-          foregroundNotificationConfig: const ForegroundNotificationConfig(
-            notificationText:
-            "Example app will continue to receive your location even when you aren't using it",
-            notificationTitle: "Running in Background",
-            enableWakeLock: true,
-          ));
-    } else if (defaultTargetPlatform == TargetPlatform.iOS ||
-        defaultTargetPlatform == TargetPlatform.macOS) {
-      locationSettings = AppleSettings(
-        accuracy: LocationAccuracy.high,
-        activityType: ActivityType.fitness,
-        distanceFilter: 100,
-        pauseLocationUpdatesAutomatically: true,
-        // Only set to true if our app will be started up in the background.
-        showBackgroundLocationIndicator: false,
-      );
-    } else {
-      locationSettings = const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 100,
-      );
-    }
-    //print(positionStream.toString());
-    return await Geolocator.getCurrentPosition();
-  }
-
-  static Future<String> getAddress(LatLng value) async {
-    List<Placemark> placeMarks =
-    await placemarkFromCoordinates(value.latitude, value.longitude);
-
-    String address = "${placeMarks.first.street},"
-        "${placeMarks.first.subLocality},"
-        "${placeMarks.first.locality},"
-        "${placeMarks.first.country} ";
-
-    return address;
-  }
-
-  static Future<String> getAddressFromMap(LatLng value) async {
-   List<Placemark> placeMarks =
-   await placemarkFromCoordinates(value.latitude, value.longitude);
-   return "${placeMarks.first.street},"
-       "${placeMarks.first.subLocality},"
-       "${placeMarks.first.locality},"
-       "${placeMarks.first.country} ";
- }
-
-  static Future<List<Placemark>> getPlaceMarksFromLatLng({required String lat, required String lng}) async {
-   List<Placemark> placeMarks =
-   await placemarkFromCoordinates(double.parse(lat), double.parse(lng));
-   return placeMarks;
- }
-}
-
- */
-
 import 'dart:io';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class LocationServices {
   static late LocationSettings locationSettings;
 
+  /// Returns current location after proper permission checks
   static Future<Position> getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Test if location services are enabled
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    // Step 1: Ensure location services are enabled
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return Future.error('Location services are disabled.');
     }
 
-    permission = await Geolocator.checkPermission();
+    // Step 2: Foreground location permission
+    LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
@@ -127,7 +30,20 @@ class LocationServices {
           'Location permissions are permanently denied, cannot request permissions.');
     }
 
-    // Platform-specific location settings
+    // Step 3: Background location permission only if user gave consent
+    if (Platform.isAndroid || Platform.isIOS) {
+      PermissionStatus backgroundStatus = await Permission.locationAlways.status;
+      if (!backgroundStatus.isGranted) {
+        // You can show a Prominent Disclosure dialog here before requesting
+        backgroundStatus = await Permission.locationAlways.request();
+        if (!backgroundStatus.isGranted) {
+          // Continue with foreground location only
+          // Optional: Log or notify user that background tracking is limited
+        }
+      }
+    }
+
+    // Step 4: Platform-specific settings
     if (Platform.isAndroid) {
       locationSettings = AndroidSettings(
         accuracy: LocationAccuracy.high,
@@ -147,7 +63,7 @@ class LocationServices {
         activityType: ActivityType.fitness,
         distanceFilter: 100,
         pauseLocationUpdatesAutomatically: true,
-        showBackgroundLocationIndicator: false,
+        showBackgroundLocationIndicator: true,
       );
     } else {
       locationSettings = const LocationSettings(
@@ -156,6 +72,7 @@ class LocationServices {
       );
     }
 
+    // Step 5: Get current location
     try {
       return await Geolocator.getCurrentPosition();
     } catch (e) {
@@ -163,12 +80,12 @@ class LocationServices {
     }
   }
 
+  /// Get address from LatLng
   static Future<String> getAddress(LatLng value) async {
     try {
       List<Placemark> placeMarks =
       await placemarkFromCoordinates(value.latitude, value.longitude);
       Placemark place = placeMarks.first;
-
       return "${place.street}, ${place.subLocality}, ${place.locality}, ${place.country}";
     } catch (e) {
       return "Failed to get address: $e";
@@ -176,15 +93,7 @@ class LocationServices {
   }
 
   static Future<String> getAddressFromMap(LatLng value) async {
-    try {
-      List<Placemark> placeMarks =
-      await placemarkFromCoordinates(value.latitude, value.longitude);
-      Placemark place = placeMarks.first;
-
-      return "${place.street}, ${place.subLocality}, ${place.locality}, ${place.country}";
-    } catch (e) {
-      return "Failed to get address: $e";
-    }
+    return getAddress(value); // reuse
   }
 
   static Future<List<Placemark>> getPlaceMarksFromLatLng({
@@ -199,3 +108,86 @@ class LocationServices {
   }
 }
 
+
+
+/*
+import 'dart:io';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import '../app/routes/app_pages.dart';
+
+
+class LocationServices {
+  static late LocationSettings locationSettings;
+
+  /// Get current location; navigate to splash only if not already there
+  static Future<Position?> getCurrentLocation({bool navigateToSplash = true}) async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      if (navigateToSplash && Get.currentRoute != Routes.ONBORDING) {
+        Get.toNamed(Routes.ONBORDING);
+      }
+      return null;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      if (navigateToSplash && Get.currentRoute != Routes.ONBORDING) {
+        Get.toNamed(Routes.ONBORDING);
+      }
+      return null;
+    }
+
+    if (Platform.isAndroid || Platform.isIOS) {
+      PermissionStatus backgroundStatus = await Permission.locationAlways.status;
+      if (!backgroundStatus.isGranted) {
+        if (navigateToSplash && Get.currentRoute != Routes.ONBORDING) {
+          Get.toNamed(Routes.ONBORDING);
+        }
+        return null;
+      }
+    }
+
+    if (Platform.isAndroid) {
+      locationSettings = AndroidSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 50,
+        intervalDuration: const Duration(seconds: 10),
+      );
+    } else if (Platform.isIOS) {
+      locationSettings = AppleSettings(
+        accuracy: LocationAccuracy.high,
+        activityType: ActivityType.fitness,
+        distanceFilter: 50,
+        pauseLocationUpdatesAutomatically: true,
+        showBackgroundLocationIndicator: true,
+      );
+    }
+
+    try {
+      return await Geolocator.getCurrentPosition();
+    } catch (e) {
+      if (navigateToSplash && Get.currentRoute != Routes.ONBORDING) {
+        Get.toNamed(Routes.ONBORDING);
+      }
+      return null;
+    }
+  }
+
+  /// Get address from LatLng
+  static Future<String> getAddress(LatLng value) async {
+    try {
+      List<Placemark> placeMarks =
+      await placemarkFromCoordinates(value.latitude, value.longitude);
+      Placemark place = placeMarks.first;
+      return "${place.street}, ${place.subLocality}, ${place.locality}, ${place.country}";
+    } catch (e) {
+      return "Failed to get address: $e";
+    }
+  }
+}*/

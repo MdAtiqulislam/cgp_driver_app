@@ -385,7 +385,7 @@ class EditProfileView extends GetView<EditProfileController> {
                   ),
                   InkWell(
                       onTap: () {
-                        Get.back();
+                        Navigator.of(Get.context!).pop(); // <-- Get.back() বদলে এটা use কর
                       },
                       child: Image.asset(AppImagePath.cancelIcon))
                 ],

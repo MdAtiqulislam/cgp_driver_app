@@ -1,79 +1,5 @@
 
-/*
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
-import '../controllers/custom_navigation_controller.dart';
-import 'package:cgp_driver_app/common_widgets/custom_app_bar.dart';
-
-class CustomNavigationView extends GetView<CustomNavigationController> {
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-
-  CustomNavigationView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: CustomAppBar(),
-        key: scaffoldKey,
-        body: Obx(() {
-          if (controller.isNavigating.isFalse) {
-            return Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  double destinationLat = 23.915522;  // Replace with dynamic destination latitude
-                  double destinationLng = 90.392962;  // Replace with dynamic destination longitude
-                  controller.startNavigation(destinationLat, destinationLng);
-                },
-                child: Text("Start Navigation"),
-              ),
-            );
-          } else {
-            return Stack(
-              children: [
-                MapBoxNavigationView(
-                  options: controller.options,
-                  onRouteEvent: controller.onRouteEvent,
-                  onCreated: (MapBoxNavigationViewController controller) {
-                    controller.initialize();
-                  },
-                ),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Obx(() {
-                    return Container(
-                      padding: const EdgeInsets.all(16.0),
-                      color: Colors.white.withOpacity(0.9),
-                      child: Text(
-                        controller.routeProgress.value,
-                        style: const TextStyle(fontSize: 16.0, color: Colors.black),
-                      ),
-                    );
-                  }),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      controller.stopNavigation();
-                    },
-                    child: const Text("Stop Navigation"),
-                  ),
-                ),
-              ],
-            );
-          }
-        }),
-      ),
-    );
-  }
-}
-
-
- */
-
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
 import '../controllers/custom_navigation_controller.dart';
@@ -104,8 +30,9 @@ class CustomNavigationView extends GetView<CustomNavigationController> {
                 bannerInstructionsEnabled: true,
                 allowsUTurnAtWayPoints: true,
                 mode: MapBoxNavigationMode.drivingWithTraffic,
-                units: VoiceUnits.imperial,
+                units: VoiceUnits.metric,
                 simulateRoute: true,
+
                 language: "en",
               ),
               onRouteEvent: controller.onRouteEvent,
@@ -123,6 +50,90 @@ class CustomNavigationView extends GetView<CustomNavigationController> {
             )
           ],
         ),
+      ),
+    );
+  }
+}*/
+
+
+/*
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
+import '../../../../common_widgets/custom_app_bar.dart';
+import '../controllers/custom_navigation_controller.dart';
+
+class CustomNavigationView extends GetView<CustomNavigationController> {
+  const CustomNavigationView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        // Stop navigation first
+        await controller.stopNavigation();
+        // Then go back safely
+        return true;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: CustomAppBar(),
+          body: Obx(() {
+            if (!controller.isInitialized.value) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            return MapBoxNavigationView(
+              options: controller.options,
+              onRouteEvent: controller.onRouteEvent,
+              onCreated: controller.onMapCreated,
+            );
+          }),
+        ),
+      ),
+    );
+  }
+}*/
+
+
+import 'package:flutter/material.dart';
+//import 'package:flutter_mapbox_navigation_plus/flutter_mapbox_navigation_plus.dart';
+import 'package:get/get.dart';
+import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
+import '../controllers/custom_navigation_controller.dart';
+import 'package:cgp_driver_app/common_widgets/custom_app_bar.dart';
+
+class CustomNavigationView extends GetView<CustomNavigationController> {
+  CustomNavigationView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        appBar: CustomAppBar(),
+        body: Obx(() {
+          if (!controller.isInitialized.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          return MapBoxNavigationView(
+            options: MapBoxOptions(
+              initialLatitude:
+              controller.currentLocation.value.latitude ?? 0.0,
+              initialLongitude:
+              controller.currentLocation.value.longitude ?? 0.0,
+              zoom: 15.0,
+              tilt: 0.0,
+              bearing: 0.0,
+              mode: MapBoxNavigationMode.drivingWithTraffic,
+              units: VoiceUnits.metric,
+              simulateRoute: false,
+              language: "en-GB",
+            ),
+            onRouteEvent: controller.onRouteEvent,
+            onCreated: controller.onMapCreated,
+          );
+        }),
       ),
     );
   }

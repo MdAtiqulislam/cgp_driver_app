@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
-import 'package:flutter_mapbox_navigation/src/models/options.dart';
+//import 'package:flutter_mapbox_navigation_plus/flutter_mapbox_navigation_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -439,19 +439,10 @@ class OngoingTripController extends GetxController {
 
 
   Future<void> initialize() async {
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-
   navigationOption = MapBoxNavigation.instance.getDefaultOptions();
-    navigationOption.simulateRoute = true;
-   // navigationOption.language = "en";
-    //_navigationOption.initialLatitude = 36.1175275;
-    //_navigationOption.initialLongitude = -115.1839524;
-    // MapBoxNavigation.instance.registerRouteEventListener(_onEmbeddedRouteEvent);
-
-    String? platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
+    navigationOption.simulateRoute = false;
+    navigationOption.units=VoiceUnits.metric;
+      String? platformVersion;
     try {
       platformVersion = await MapBoxNavigation.instance.getPlatformVersion();
     } on PlatformException {

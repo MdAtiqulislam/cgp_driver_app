@@ -216,6 +216,7 @@ import 'package:cgp_driver_app/common_widgets/my_drawer.dart';
 import 'package:cgp_driver_app/constraints/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
+//import 'package:flutter_mapbox_navigation_plus/flutter_mapbox_navigation_plus.dart';
 import 'package:get/get.dart';
 
 import 'custom_app_bar.dart';
@@ -266,15 +267,6 @@ class _EmbeddedNavigationScreenState extends State<EmbeddedNavigationScreen> {
                   latitude: widget.originLatitude,
                   longitude: widget.originLongitude),
             ),
-           /* Positioned(
-              bottom: 0,
-              left: 0,
-              child: Container(height: 100,width: 100,color: Colors.white,
-              child: IconButton(onPressed: (){
-                Get.offAndToNamed(Routes.ONGOING_TRIP);
-              }, icon:  const Icon(Icons.cancel_outlined,size: 36,color: AppColors.primaryColor,),),
-              ),
-            ),*/
           ],
         ),
       ),

@@ -6,11 +6,10 @@ import 'package:cgp_driver_app/app/modules/ongoingTrip/views/trip_info_card.dart
 import 'package:cgp_driver_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
+//import 'package:flutter_mapbox_navigation_plus/flutter_mapbox_navigation_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../../common_widgets/custom_app_bar.dart';
 import '../../../../common_widgets/custom_loading_screen.dart';
 import '../../../../common_widgets/custom_title.dart';
@@ -42,100 +41,75 @@ class OngoingTripView extends GetView<OngoingTripController> {
                   title: "Ongoing",
                   titleTextSize: 14,
                   enableBackButton: false,
-
-                  /* onTrouble: () {
-                    Get.bottomSheet(
-                      isScrollControlled: true,
-                      ignoreSafeArea: false,
-                      troubleOnTrip(),
-                    );
-                  },*/
                 ),
                 body: Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: AppDimensions.horizontalPadding.w),
                   child: Column(
                     children: [
-                      /* StatusSection(
-                        trailing: trailingSection(),
-                      ),*/
-                      /* if (mapBoxController.isNavigating.value)
-                        SizedBox(
-                          height: 0,
-                          child: MapBoxNavigationView(
-                            options: mapBoxController.options,
-                            onRouteEvent: mapBoxController.onRouteEvent,
-                            onCreated:
-                                (MapBoxNavigationViewController controller) {
-                              controller.initialize();
-                            },
-                          ),
-                        ),
-                      SizedBox(
-                        height: AppDimensions.sectionPadding.h,
-                      ),*/
                       GeneralMapWidget(
                           showNavigationButton:
                               controller.showNavigationButton.value,
-                          startNavigation: () async {
-                            if (Platform.isIOS) {
-                              controller.isLoading.value = true;
-                              await getCurrentLocation().then((position) async {
-                                await controller.initialize().then((value) {
-                                  controller.isLoading.value = false;
-                                });
-                                var destinationLatitude =
-                                    controller.destinationPoint.value.latitude;
-                                var destinationLongitude =
-                                    controller.destinationPoint.value.longitude;
+                         startNavigation: () async {
 
-                                var originLatitude = position.latitude;
-                                var originLongitude = position.longitude;
+                           /*Get.put(CustomNavigationController());
+                           await Get.find<CustomNavigationController>()
+                               .startNavigation(
+                               controller
+                                   .destinationPoint.value.latitude,
+                               controller
+                                   .destinationPoint.value.longitude)
+                               .then((_) {
+                             controller.isLoading.value = false;
+                           });*/
 
-                                final _startPoint = WayPoint(
-                                    name: "Origin",
-                                    latitude: originLatitude,
-                                    longitude: originLongitude,
-                                    isSilent: false);
 
-                                final _endPoint = WayPoint(
-                                    name: "Destination",
-                                    latitude: destinationLatitude,
-                                    longitude: destinationLongitude,
-                                    isSilent: false);
+                           if (Platform.isIOS) {
+                             controller.isLoading.value = true;
 
-                                var wayPoints = <WayPoint>[];
-                                wayPoints.add(_startPoint);
-                                wayPoints.add(_endPoint);
-                                var opt = MapBoxOptions.from(
-                                    controller.navigationOption);
+                             final position = await getCurrentLocation();
 
-                                opt.zoom = 14.0;
-                                opt.mode =
-                                    MapBoxNavigationMode.drivingWithTraffic;
-                                opt.simulateRoute = false;
-                                opt.enableRefresh = true;
-                                opt.showEndOfRouteFeedback = false;
-                                opt.showReportFeedbackButton = false;
-                                opt.language = "en";
-                                await MapBoxNavigation.instance.startNavigation(
-                                    wayPoints: wayPoints, options: opt);
+                             await controller.initialize();
+                             controller.isLoading.value = false;
 
-                                /*Navigator.of(context).push(
-                                 MaterialPageRoute(
-                                   builder: (context) =>
-                                       EmbeddedNavigationScreen(
-                                         destinationLatitude: controller
-                                             .destinationPoint.value.latitude,
-                                         destinationLongitude: controller
-                                             .destinationPoint.value.longitude,
-                                         originLatitude: position.latitude,
-                                         originLongitude: position.longitude,
-                                       ),
-                                 ),
-                               );*/
-                              });
-                            }
+                             final wayPoints = [
+                               WayPoint(
+                                 name: "Origin",
+                                 latitude: position.latitude,
+                                 longitude: position.longitude,
+                                 isSilent: false,
+                               ),
+                               WayPoint(
+                                 name: "Destination",
+                                 latitude: controller.destinationPoint.value.latitude,
+                                 longitude: controller.destinationPoint.value.longitude,
+                                 isSilent: false,
+                               ),
+                             ];
+
+                             var opt = MapBoxOptions.from(controller.navigationOption);
+
+                             opt.zoom = 14.0;
+                             opt.mode = MapBoxNavigationMode.drivingWithTraffic;
+                             opt.simulateRoute = false;
+                             opt.enableRefresh = true;
+                             opt.showEndOfRouteFeedback = false;
+                             opt.showReportFeedbackButton = false;
+                             opt.language = "en-GB";
+                             opt.units = VoiceUnits.metric;
+
+                             /// 🔥 Important fixes
+                            //  MapBoxNavigation.instance.getDefaultOptions();
+
+                             //await MapBoxNavigation.instance.setDistanceUnit(VoiceUnits.metric);
+
+                             await MapBoxNavigation.instance.startNavigation(
+                               wayPoints: wayPoints,
+                               options: opt,
+                             );
+                           }
+
+
                             else {
                               Get.put(CustomNavigationController());
                               await Get.find<CustomNavigationController>()
@@ -148,7 +122,19 @@ class OngoingTripView extends GetView<OngoingTripController> {
                                 controller.isLoading.value = false;
                               });
                             }
-                          }),
+
+
+
+                          /* Get.put(CustomNavigationController());
+
+                          await Get.find<CustomNavigationController>().startNavigation(
+                             controller.destinationPoint.value.latitude,
+                             controller.destinationPoint.value.longitude,
+                           );
+*/
+                          }
+
+                          ),
                       SizedBox(
                         height: AppDimensions.widgetPadding.h,
                       ),

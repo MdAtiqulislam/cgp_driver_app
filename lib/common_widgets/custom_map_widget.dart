@@ -1,6 +1,7 @@
 import 'package:cgp_driver_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mapbox_navigation/flutter_mapbox_navigation.dart';
+//import 'package:flutter_mapbox_navigation_plus/flutter_mapbox_navigation_plus.dart';
 import 'package:get/get.dart';
 
 class CustomMapWidget extends StatefulWidget {
@@ -28,7 +29,9 @@ class CustomMapWidgetState extends State<CustomMapWidget> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializeMap().then((value){startNavigation();});
+      _initializeMap().then((value) {
+        startNavigation();
+      });
     });
   }
 
@@ -40,11 +43,12 @@ class CustomMapWidgetState extends State<CustomMapWidget> {
       await _controller.buildRoute(
         wayPoints: [widget.origin, widget.destination],
         options: MapBoxOptions(
-          allowsUTurnAtWayPoints: true,
-          mode: MapBoxNavigationMode.drivingWithTraffic,
-          voiceInstructionsEnabled: true,
-          bannerInstructionsEnabled: true,
-        ),
+            allowsUTurnAtWayPoints: true,
+            mode: MapBoxNavigationMode.drivingWithTraffic,
+            voiceInstructionsEnabled: true,
+            bannerInstructionsEnabled: true,
+            units: VoiceUnits.metric,
+            enableRefresh: true),
       );
       setState(() {
         _isMapInitialized = true;
@@ -106,18 +110,22 @@ class CustomMapWidgetState extends State<CustomMapWidget> {
   Future<void> _onRouteEvent(e) async {
     switch (e.eventType) {
       case MapBoxEvent.route_built:
-     // _controller.startNavigation();
+        // _controller.startNavigation();
         break;
+
       case MapBoxEvent.navigation_finished:
         Get.offAndToNamed(Routes.ONGOING_TRIP);
-      // Handle navigation finished
+        // Handle navigation finished
+        break;
+      case MapBoxEvent.on_arrival:
+        print("Arrived at destination but keep navigation active");
         break;
       case MapBoxEvent.navigation_cancelled:
         Get.offAndToNamed(Routes.ONGOING_TRIP);
-      // Handle navigation cancelled
+        // Handle navigation cancelled
         break;
       default:
-      // Handle other events
+        // Handle other events
         break;
     }
   }

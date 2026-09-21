@@ -90,8 +90,8 @@ class StatusSectionController extends GetxController {
     var endPoint = APIEndPoints.updateOnlineStatus;
     body = {
       "isActive": isOnline.value,
-      "latitude": position.latitude,
-      "longitude": position.longitude
+      "latitude": position?.latitude,
+      "longitude": position?.longitude
     };
     if(isOnline.value) {
       body["vehicleId"]=selectedRiderVehicle.value.id;

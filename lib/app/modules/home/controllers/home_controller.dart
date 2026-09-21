@@ -124,7 +124,7 @@ Future<void>  reloadData() async{
 
    await LocalServices.getOnGoingTrip().then((value) async {
 
-     if(value!=null && value!="null"){
+     if(value!=null && value!="null"&&value.isNotEmpty){
        isLoading.value = true;
        var endPoint = APIEndPoints.getDeliveryRequestByID.replaceAll("{id}", value);
        try {

@@ -2,6 +2,7 @@ import 'package:cgp_driver_app/app/modules/statusSection/status_section.dart';
 import 'package:cgp_driver_app/common_widgets/custom_app_bar.dart';
 import 'package:cgp_driver_app/app/modules/generalMap/geneal_map_widget.dart';
 import 'package:cgp_driver_app/common_widgets/custom_loading_screen.dart';
+import 'package:cgp_driver_app/common_widgets/custom_snackbar.dart';
 import 'package:cgp_driver_app/common_widgets/my_drawer.dart';
 import 'package:cgp_driver_app/constraints/dimensions.dart';
 import 'package:flutter/material.dart';

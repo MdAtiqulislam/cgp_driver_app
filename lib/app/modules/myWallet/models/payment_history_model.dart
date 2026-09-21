@@ -34,24 +34,28 @@ class PaymentHistoryModel {
 
 class PaymentHistoryData {
   final dynamic currentBalance;
-  final int? lastSettlementAmount;
+  final dynamic lastSettlementAmount;
+  final bool? withdrawRequest;
   final List<SinglePaymentModel>? paymentHistory;
 
   PaymentHistoryData({
     this.currentBalance,
     this.lastSettlementAmount,
     this.paymentHistory,
+    this.withdrawRequest,
   });
 
   factory PaymentHistoryData.fromJson(Map<String, dynamic> json) => PaymentHistoryData(
     currentBalance: json["current_balance"],
     lastSettlementAmount: json["last_settlement_amount"],
+    withdrawRequest: json["withdraw_request"],
     paymentHistory: json["payment_history"] == null ? [] : List<SinglePaymentModel>.from(json["payment_history"]!.map((x) => SinglePaymentModel.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "current_balance": currentBalance,
     "last_settlement_amount": lastSettlementAmount,
+    "withdraw_request": withdrawRequest,
     "payment_history": paymentHistory == null ? [] : List<dynamic>.from(paymentHistory!.map((x) => x.toJson())),
   };
 }
@@ -72,7 +76,7 @@ class SinglePaymentModel {
   final String? tradebarFee;
   final dynamic netBalance;
   final dynamic payableAmount;
-  final int? settlementAmount;
+  final dynamic settlementAmount;
   final dynamic refundAmount;
   final dynamic remarks;
   final dynamic cfMediaId;

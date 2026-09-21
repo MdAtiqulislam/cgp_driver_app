@@ -546,9 +546,6 @@ class RemoteServices {
      // request.fields.addAll(body ?? {});
       request.fields['id'] = id;
 
-      print(images);
-      print(">>>>>>>>>>${request.fields}");
-
       for (final image in images) {
         final http.ByteStream stream = http.ByteStream(image.openRead());
         final int length = await image.length();
