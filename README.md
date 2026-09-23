@@ -1,16 +1,47 @@
-# cgp_driver_app
+# Trade Bar Driver (cgp_driver_app)
 
-A new Flutter project.
+The driver-side Flutter app for the TradeBar delivery platform — trips, navigation, earnings and driver verification.
+
+## Features
+
+- Trip flow: accept, navigate and complete trips
+- Live map view (`generalMap`) for pickup/drop-off navigation
+- Driver onboarding: driver info, driving-license info and image verification
+- Auth: login, forgot password
+- Chat history with customers/support
+- Home dashboard, edit profile, FAQ page
+- Custom navigation and themed UI
+
+## Tech Stack
+
+- Flutter (Dart)
+- GetX for state management and routing
+- Firebase (`firebase_options.dart` present — configure with your own project)
+- REST API backend, Google Maps integration
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+```bash
+flutter pub get
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
+> Configure Firebase with `flutterfire configure` and add your own
+> `google-services.json` / `GoogleService-Info.plist` — these files are
+> intentionally not committed.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Project Structure
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```
+lib/
+├── app/modules/      # Trips, map, auth, chat, profile, FAQ
+├── models/           # Data models
+├── services/         # API, location and platform services
+├── theme/            # App theme
+└── main.dart         # App entry point
+```
+
+## Notes
+
+- App label: "Trade Bar Driver" (Android)
+- No secrets, keystores or Firebase configs are committed to this repository.
