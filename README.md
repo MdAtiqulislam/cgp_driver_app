@@ -2,6 +2,9 @@
 
 The driver-side Flutter app for the TradeBar delivery platform — trips, navigation, earnings and driver verification.
 
+[![Google Play](https://img.shields.io/badge/Google_Play-Download-414141?style=for-the-badge&logo=google-play&logoColor=white)](https://play.google.com/store/apps/details?id=com.revinr.cgp_driver_app) [![App Store](https://img.shields.io/badge/App_Store-Download-0D96F2?style=for-the-badge&logo=app-store&logoColor=white)](https://apps.apple.com/app/id6670425187)
+
+
 ## Features
 
 - Trip flow: accept, navigate and complete trips
